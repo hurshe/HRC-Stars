@@ -1,0 +1,297 @@
+// HRC STARS — схема базы данных.
+// Этап 0–1: локации, департаменты, позиции, роли, права, пользователи, приглашения, аудит.
+// Модули документов, тестов, чек-листов, задач и Wild Cards добавляются на своих этапах.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // В Prisma 7 строка подключения переехала в prisma.config.ts,
+  // а клиент получает её через драйвер-адаптер (src/lib/db.ts)
+}
+
+// ─── Справочники организации ──────────────────────────────────────────────────
+
+/// Кафе. Одно сейчас, сеть потом — поэтому location_id есть у всех доменных данных.
+model Location {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  timezone      String   @default("Europe/Warsaw")
+  defaultLocale String   @default("pl")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  users     User[]
+  settings  Setting[]
+  auditLogs AuditLog[]
+}
+
+/// Департамент: Management, FOH, Retail, Kitchen, Receiving.
+/// Общий справочник для всех локаций — должности везде называются одинаково.
+model Department {
+  id        String  @id @default(cuid())
+  code      String  @unique
+  nameEn    String
+  namePl    String
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  positions   Position[]
+  scopedUsers User[]     @relation("UserDepartmentScope")
+}
+
+/// Должность: SERVER, BARTENDER, COOK, RSA и т. д.
+/// Определяет, какие тесты и документы обязательны — связи добавятся на этапах 2–3.
+model Position {
+  id           String  @id @default(cuid())
+  code         String  @unique
+  nameEn       String
+  namePl       String
+  departmentId String
+  sortOrder    Int     @default(0)
+  isActive     Boolean @default(true)
+
+  department Department         @relation(fields: [departmentId], references: [id])
+  employees  EmployeePosition[]
+
+  @@index([departmentId])
+}
+
+// ─── Роли и права ─────────────────────────────────────────────────────────────
+
+/// Роль = уровень в иерархии + стартовый набор прав.
+/// Уровень определяет, кому можно ставить задачи (только вниз) и чьи данные видно.
+model Role {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  nameEn    String
+  namePl    String
+  /// 100 SUPER_ADMIN, 90 GM, 80 AGM, 70 MANAGER, 60 SUPERVISOR, 40 MIT, 10 STAFF
+  level     Int
+  /// Системную роль нельзя удалить из интерфейса
+  isSystem  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  permissions RolePermission[]
+
+  @@index([level])
+}
+
+/// Справочник прав. Коды вида "employee.view", "wildcard.grant".
+/// Пополняется сидом при добавлении новых модулей.
+model Permission {
+  id     String @id @default(cuid())
+  code   String @unique
+  /// Группа для интерфейса: employees, documents, tests, tasks, wildcards, settings
+  group  String
+  nameEn String
+  namePl String
+  /// GDPR-чувствительное право: включение показывает предупреждение и идёт в отдельный отчёт
+  isSensitive Boolean @default(false)
+  /// false — право уровня SUPER_ADMIN, из интерфейса не редактируется вообще
+  isEditable  Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  roles RolePermission[]
+  users UserPermission[]
+
+  @@index([group])
+}
+
+/// Набор прав роли. Редактируется GM и AGM в интерфейсе.
+model RolePermission {
+  roleId       String
+  permissionId String
+  enabled      Boolean  @default(true)
+  updatedById  String?
+  updatedAt    DateTime @updatedAt
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+/// Персональное исключение: право выдано или отобрано у конкретного человека,
+/// не затрагивая всю роль. Например, один супервайзер видит персданные, остальные нет.
+model UserPermission {
+  userId       String
+  permissionId String
+  /// true — выдать сверх роли, false — отобрать вопреки роли
+  enabled      Boolean
+  note         String?
+  grantedById  String?
+  grantedAt    DateTime @default(now())
+
+  user       User       @relation("UserPermissions", fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  grantedBy  User?      @relation("PermissionGrantor", fields: [grantedById], references: [id])
+
+  @@id([userId, permissionId])
+  @@index([permissionId])
+}
+
+// ─── Пользователи ─────────────────────────────────────────────────────────────
+
+enum UserStatus {
+  /// Учётка создана, приглашение отправлено, пароль ещё не задан
+  INVITED
+  ACTIVE
+  /// Временно заблокирован
+  SUSPENDED
+  /// Уволен: данные сохранены, вход закрыт
+  ARCHIVED
+}
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  firstName    String
+  lastName     String
+  /// null, пока сотрудник не активировал учётку по приглашению
+  passwordHash String?
+  /// Короткий код для быстрого входа на планшете точки
+  pinHash      String?
+  locale       String  @default("pl")
+
+  status             UserStatus @default(INVITED)
+  /// Ярлык рядом с именем: SERVER · TRAINER. Даёт права на создание тестов и материалов
+  isTrainer          Boolean    @default(false)
+  mustChangePassword Boolean    @default(false)
+  emailVerifiedAt    DateTime?
+
+  roleId     String
+  locationId String
+  /// Ограничение по департаменту: Kitchen Manager работает только со своей кухней
+  departmentScopeId String?
+
+  hiredAt DateTime?
+  /// Для гостевых учёток MIT: после этой даты вход закрывается автоматически
+  guestUntil DateTime?
+
+  lastLoginAt         DateTime?
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+
+  /// Мягкое удаление. GDPR-стирание удаляет запись физически
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  role            Role        @relation(fields: [roleId], references: [id])
+  location        Location    @relation(fields: [locationId], references: [id])
+  departmentScope Department? @relation("UserDepartmentScope", fields: [departmentScopeId], references: [id])
+
+  positions           EmployeePosition[]
+  permissions         UserPermission[]   @relation("UserPermissions")
+  grantedPermissions  UserPermission[]   @relation("PermissionGrantor")
+  invitations         Invitation[]       @relation("InvitationTarget")
+  createdInvitations  Invitation[]       @relation("InvitationCreator")
+  auditEntries        AuditLog[]         @relation("AuditActor")
+  updatedSettings     Setting[]
+
+  @@index([locationId])
+  @@index([roleId])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+/// Сотрудник может занимать несколько позиций одновременно —
+/// в текущей таблице одни и те же люди есть и в SERVER, и в BARTENDER.
+model EmployeePosition {
+  id         String    @id @default(cuid())
+  userId     String
+  positionId String
+  isPrimary  Boolean   @default(false)
+  startedAt  DateTime  @default(now())
+  endedAt    DateTime?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position Position @relation(fields: [positionId], references: [id])
+
+  @@unique([userId, positionId])
+  @@index([positionId])
+}
+
+enum InvitationType {
+  /// Ссылка в письме, срок жизни 7 дней
+  EMAIL_LINK
+  /// Одноразовый код, менеджер диктует лично. Срок жизни 24 часа
+  ACTIVATION_CODE
+}
+
+/// Приглашение сотрудника. Сам токен в базе не хранится — только его хеш,
+/// поэтому утечка базы не даёт возможности активировать чужие учётки.
+model Invitation {
+  id          String         @id @default(cuid())
+  userId      String
+  type        InvitationType @default(EMAIL_LINK)
+  tokenHash   String         @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  revokedAt   DateTime?
+  createdById String
+  createdAt   DateTime       @default(now())
+
+  user      User @relation("InvitationTarget", fields: [userId], references: [id], onDelete: Cascade)
+  createdBy User @relation("InvitationCreator", fields: [createdById], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ─── Сквозные подсистемы ──────────────────────────────────────────────────────
+
+/// Аудит. Пишется при изменении персданных, прав, документов, результатов тестов
+/// и при выдаче Wild Card. Просмотр персональных данных тоже логируется.
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String?
+  /// Код действия: employee.created, permission.changed, personal_data.viewed
+  action      String
+  entityType  String
+  entityId    String?
+  locationId  String?
+  before      Json?
+  after       Json?
+  /// Отметка для GDPR-отчёта: доступ к персональным данным
+  isSensitive Boolean  @default(false)
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor    User?     @relation("AuditActor", fields: [actorId], references: [id])
+  location Location? @relation(fields: [locationId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@index([createdAt])
+  @@index([isSensitive, createdAt])
+}
+
+/// Настройки, которые меняются из интерфейса, а не в коде:
+/// проходные баллы тестов, срок жизни Wild Card, лимиты выдачи.
+model Setting {
+  id  String @id @default(cuid())
+  key String
+  /// "GLOBAL" или id локации. Отдельное поле, потому что уникальный индекс
+  /// по nullable-колонке в Postgres не работает: NULL не равен NULL
+  scope       String  @default("GLOBAL")
+  locationId  String?
+  value       Json
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+
+  location  Location? @relation(fields: [locationId], references: [id])
+  updatedBy User?     @relation(fields: [updatedById], references: [id])
+
+  @@unique([scope, key])
+  @@index([key])
+}

@@ -1,0 +1,63 @@
+# Локальное окружение разработки HRC STARS.
+# Всё, что нужно приложению, кроме самого Next.js: база, файловое хранилище, перехватчик почты.
+# Запуск: docker compose up -d
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: hrc-stars-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hrc}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hrc_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-hrc_stars}
+      # Кластер поднимается на C.UTF-8. Польская сортировка и поиск добавляются
+      # отдельной ICU-коллацией в миграции, когда дойдём до поиска по документам:
+      # alpine-образ системных локалей не содержит и молча откатывается на "simple".
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hrc} -d ${POSTGRES_DB:-hrc_stars}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # S3-совместимое хранилище. В продакшене заменяется на S3/R2 сменой переменных окружения.
+  minio:
+    image: minio/minio:latest
+    container_name: hrc-stars-storage
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-hrc_minio}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-hrc_minio_dev_password}
+    ports:
+      - "${S3_PORT:-9000}:9000"      # API
+      - "${S3_CONSOLE_PORT:-9001}:9001"  # веб-консоль
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Перехватчик почты для разработки: письма-приглашения никуда не уходят,
+  # их видно в браузере на http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: hrc-stars-mail
+    restart: unless-stopped
+    ports:
+      - "${SMTP_PORT:-1025}:1025"    # SMTP
+      - "${MAILPIT_UI_PORT:-8025}:8025"  # веб-интерфейс
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  postgres_data:
+  minio_data:
