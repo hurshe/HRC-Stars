@@ -35,7 +35,9 @@
       "passwordConfirm": "Powtórz hasło",
       "submit": "Zapisz i zaloguj",
       "submitting": "Zapisywanie…",
-      "success": "Hasło zostało ustawione"
+      "success": "Hasło zostało ustawione",
+      "email": "Adres e-mail",
+      "code": "Kod aktywacyjny"
     },
     "changePassword": {
       "title": "Zmień hasło",
@@ -76,14 +78,17 @@
     "tasks": "Zadania",
     "wildcards": "Wild Cards",
     "reports": "Raporty",
-    "settings": "Ustawienia"
+    "settings": "Ustawienia",
+    "ariaLabel": "Nawigacja główna",
+    "comingSoon": "Wkrótce"
   },
   "dashboard": {
     "title": "Pulpit",
     "welcome": "Cześć, {name}",
     "yourRole": "Twoja rola",
     "yourLocation": "Lokalizacja",
-    "placeholder": "Moduły pojawią się tutaj w kolejnych etapach."
+    "placeholder": "Moduły pojawią się tutaj w kolejnych etapach.",
+    "permissions": "Uprawnienia"
   },
   "errors": {
     "forbidden": {

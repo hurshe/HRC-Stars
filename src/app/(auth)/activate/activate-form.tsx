@@ -34,10 +34,10 @@ export function ActivateForm({
       {/* Без токена в ссылке активация идёт по коду, который менеджер продиктовал лично */}
       {!token && (
         <>
-          <Field label="E-mail" htmlFor="email">
+          <Field label={t('email')} htmlFor="email">
             <Input id="email" name="email" type="email" autoComplete="username" required autoFocus />
           </Field>
-          <Field label="Kod / Code" htmlFor="code">
+          <Field label={t('code')} htmlFor="code">
             <Input
               id="code"
               name="code"

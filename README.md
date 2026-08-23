@@ -13,6 +13,7 @@ Next.js 16 (App Router) · React 19 · TypeScript · PostgreSQL 16 · Prisma 7 �
 
 - **Node.js 22+** — Prisma 7 требует 20.19+ / 22.12+ / 24+
 - **Docker** — база, файловое хранилище и перехватчик почты поднимаются в контейнерах
+- **Диск с NTFS или ext4, но не exFAT.** exFAT не умеет символические ссылки: Turbopack падает на создании junction point, Webpack — на `readlink`, git ругается на «dubious ownership». Обходного пути нет, проект просто не соберётся
 
 ## Запуск с нуля
 

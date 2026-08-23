@@ -30,7 +30,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="rounded-(--radius-panel) border border-border bg-surface p-4">
-          <dt className="text-xs tracking-wide text-text-muted uppercase">Uprawnienia</dt>
+          <dt className="text-xs tracking-wide text-text-muted uppercase">{t('permissions')}</dt>
           <dd className="mt-1 font-medium text-text">{permissions.size}</dd>
         </div>
       </dl>

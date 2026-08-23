@@ -17,7 +17,7 @@ export function AppNav({ items }: { items: NavItem[] }) {
   const t = useTranslations('nav')
 
   return (
-    <nav className="flex gap-1 overflow-x-auto" aria-label="Główna nawigacja">
+    <nav className="flex gap-1 overflow-x-auto" aria-label={t('ariaLabel')}>
       {items.map((item) => {
         const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
 
@@ -26,7 +26,9 @@ export function AppNav({ items }: { items: NavItem[] }) {
             <span
               key={item.key}
               aria-disabled="true"
-              title="Wkrótce / Coming soon"
+              // В подпись входит и название модуля: иначе скринридер прочитает
+              // только «Wkrótce», и станет непонятно, о каком разделе речь
+              title={`${t(item.key)} — ${t('comingSoon')}`}
               className="shrink-0 cursor-default rounded-(--radius-control) px-3 py-2 text-sm text-text-muted/50"
             >
               {t(item.key)}

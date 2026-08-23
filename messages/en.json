@@ -35,7 +35,9 @@
       "passwordConfirm": "Repeat password",
       "submit": "Save and sign in",
       "submitting": "Saving…",
-      "success": "Password has been set"
+      "success": "Password has been set",
+      "email": "Email address",
+      "code": "Activation code"
     },
     "changePassword": {
       "title": "Change password",
@@ -76,14 +78,17 @@
     "tasks": "Tasks",
     "wildcards": "Wild Cards",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "ariaLabel": "Main navigation",
+    "comingSoon": "Coming soon"
   },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Hi, {name}",
     "yourRole": "Your role",
     "yourLocation": "Location",
-    "placeholder": "Modules will appear here in the next phases."
+    "placeholder": "Modules will appear here in the next phases.",
+    "permissions": "Permissions"
   },
   "errors": {
     "forbidden": {

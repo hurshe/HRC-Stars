@@ -1,7 +1,9 @@
+import { getTranslations } from 'next-intl/server'
+
 /// Ярлык сотрудника рядом с именем: SERVER · BARTENDER · TRAINER.
 /// Признак тренера идёт последним и выделяется — это не должность,
 /// а дополнительная роль поверх неё.
-export function PositionBadges({
+export async function PositionBadges({
   positions,
   isTrainer,
   locale,
@@ -11,6 +13,8 @@ export function PositionBadges({
   locale: string
 }) {
   if (positions.length === 0 && !isTrainer) return null
+
+  const t = await getTranslations('trainer')
 
   return (
     <div className="flex flex-wrap justify-end gap-x-1.5 text-[11px] font-medium tracking-wide text-text-muted uppercase">
@@ -23,7 +27,7 @@ export function PositionBadges({
       {isTrainer && (
         <>
           {positions.length > 0 && <span>·</span>}
-          <span className="text-warning">TRAINER</span>
+          <span className="text-warning">{t('badge')}</span>
         </>
       )}
     </div>
