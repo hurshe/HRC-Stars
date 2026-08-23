@@ -660,7 +660,22 @@
       "invalidAmount": "Liczba kart musi być większa od zera",
       "insufficientBalance": "Za mało kart",
       "limitReached": "Osiągnięto limit tego vouchera",
-      "monthlyLimitReached": "Osiągnięto miesięczny limit przyznawania"
+      "monthlyLimitReached": "Osiągnięto miesięczny limit przyznawania",
+      "noStock": "Nie masz konta kart — poproś dyrektora o przydział",
+      "notEnoughStock": "Za mało kart na Twoim koncie",
+      "managerTooHigh": "Nie możesz przydzielić kart osobie na tym samym lub wyższym poziomie"
+    },
+    "stock": {
+      "title": "Karty na Twoim koncie",
+      "hint": "Karty na koncie menedżera są bezterminowe. Termin 3 miesięcy zaczyna biec dopiero po wydaniu pracownikowi",
+      "balance": "Na koncie",
+      "none": "Nie masz przydzielonych kart — wydawaj bez ograniczenia zapasu",
+      "allocate": "Wydaj karty menedżerowi",
+      "manager": "Menedżer",
+      "amount": "Liczba kart",
+      "note": "Notatka",
+      "submit": "Wydaj",
+      "allocated": "Na koncie: {balance}"
     }
   }
 }

@@ -273,6 +273,8 @@ model User {
   // Признание
   wildCards        WildCardGrant[]  @relation("WildCardOwner")
   grantedWildCards WildCardGrant[]  @relation("WildCardGranter")
+  wildCardStock    WildCardStock?   @relation("WildCardStockOwner")
+  wildCardAllocations WildCardAllocation[] @relation("WildCardAllocator")
   voucherRequests  VoucherRequest[] @relation("VoucherRequester")
   approvedVouchers VoucherRequest[] @relation("VoucherApprover")
   redeemedVouchers VoucherRequest[] @relation("VoucherRedeemer")

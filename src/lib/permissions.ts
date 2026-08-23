@@ -75,6 +75,7 @@ export const PERMISSIONS = [
 
   // Wild Cards
   { code: 'wildcard.grant', group: 'wildcards', nameEn: 'Grant Wild Cards', namePl: 'Przyznawanie Wild Card' },
+  { code: 'wildcard.allocate', group: 'wildcards', nameEn: 'Allocate cards to managers', namePl: 'Wydawanie kart menedżerom' },
   { code: 'wildcard.balance.view', group: 'wildcards', nameEn: 'View balances of others', namePl: 'Podgląd sald innych' },
   { code: 'wildcard.voucher.manage', group: 'wildcards', nameEn: 'Manage voucher catalogue', namePl: 'Zarządzanie katalogiem voucherów' },
   { code: 'wildcard.request.approve', group: 'wildcards', nameEn: 'Approve voucher requests', namePl: 'Zatwierdzanie wniosków o voucher' },

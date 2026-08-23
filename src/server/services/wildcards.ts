@@ -1,15 +1,20 @@
 import { db } from '@/lib/db'
-import type { CurrentUser } from '@/server/auth/session'
+import { outranks, type CurrentUser } from '@/server/auth/session'
 import { writeAudit } from './audit'
-import { getSettingNumber } from './settings'
+import { getSetting, getSettingNumber } from './settings'
 
 /*
   Wild Cards.
 
-  Карты хранятся партиями, а не одним счётчиком. Причина: у каждой партии
-  свой срок годности, и списывать нужно самые старые первыми — иначе
-  на ваучер уйдут свежие карты, старые сгорят, и человек потеряет
-  заработанное на ровном месте.
+  Срок годности начинает идти ТОЛЬКО с момента выдачи сотруднику.
+  Пока карты лежат на счету менеджера, они бессрочны — это пачка в ящике
+  стола, а не начисление. Поэтому счёт менеджера (WildCardStock) — просто
+  число без дат, а выдача сотруднику создаёт партию с датой сгорания.
+
+  Карты у сотрудника хранятся партиями, а не одним счётчиком. Причина:
+  у каждой партии свой срок годности, и списывать нужно самые старые
+  первыми — иначе на ваучер уйдут свежие карты, старые сгорят, и человек
+  потеряет заработанное на ровном месте.
 
   Резерв не хранится отдельным полем: он вычисляется как сумма заявок
   в статусе PENDING. Так невозможно рассинхронизировать баланс и резерв.
@@ -58,6 +63,60 @@ export async function getBalance(userId: string): Promise<Balance> {
   }
 }
 
+/// Счёт менеджера. Дат здесь нет вообще: карты на счету не сгорают
+export async function getManagerStock(userId: string) {
+  const stock = await db.wildCardStock.findUnique({
+    where: { userId },
+    select: { id: true, balance: true, updatedAt: true },
+  })
+  return stock
+}
+
+/// Пополнение счёта менеджера. Право отдельное от выдачи сотрудникам:
+/// раздавать карты может менеджер, а вот пополнять его запас — только GM и AGM
+export async function allocateToManager(
+  actor: CurrentUser,
+  input: { managerId: string; amount: number; note?: string },
+) {
+  if (input.amount < 1) return { ok: false as const, error: 'invalidAmount' as const }
+
+  const manager = await db.user.findFirst({
+    where: { id: input.managerId, locationId: actor.locationId, deletedAt: null },
+    select: { id: true, role: { select: { level: true } } },
+  })
+  if (!manager) return { ok: false as const, error: 'notFound' as const }
+  if (!outranks(actor, manager.role.level)) {
+    return { ok: false as const, error: 'managerTooHigh' as const }
+  }
+
+  const stock = await db.wildCardStock.upsert({
+    where: { userId: manager.id },
+    update: { balance: { increment: input.amount } },
+    create: { userId: manager.id, balance: input.amount },
+    select: { id: true, balance: true },
+  })
+
+  await db.wildCardAllocation.create({
+    data: {
+      stockId: stock.id,
+      allocatedById: actor.id,
+      amount: input.amount,
+      note: input.note || null,
+    },
+  })
+
+  await writeAudit({
+    actorId: actor.id,
+    action: 'wildcard.allocated',
+    entityType: 'WildCardStock',
+    entityId: stock.id,
+    locationId: actor.locationId,
+    after: { managerId: manager.id, amount: input.amount, balance: stock.balance },
+  })
+
+  return { ok: true as const, balance: stock.balance }
+}
+
 export async function grantWildCards(
   actor: CurrentUser,
   input: { userId: string; amount: number; reason: string; note?: string },
@@ -85,19 +144,44 @@ export async function grantWildCards(
     }
   }
 
+  // Счёт менеджера заводится в тот момент, когда GM впервые выдаёт ему
+  // пачку карт. Пока счёта нет, менеджер выдаёт без ограничения по запасу —
+  // если нужен строгий учёт, включается настройкой
+  const stock = await db.wildCardStock.findUnique({
+    where: { userId: actor.id },
+    select: { id: true, balance: true },
+  })
+  const strict = (await getSetting<boolean>('wildcard.require_manager_stock')) === true
+
+  if (!stock && strict) return { ok: false as const, error: 'noStock' as const }
+  if (stock && stock.balance < input.amount) {
+    return { ok: false as const, error: 'notEnoughStock' as const }
+  }
+
   const ttlDays = await getSettingNumber('wildcard.ttl_days', DEFAULT_TTL_DAYS)
+  // Дата сгорания появляется именно здесь: до этого карты лежали
+  // на счету менеджера без срока
   const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000)
 
-  const grant = await db.wildCardGrant.create({
-    data: {
-      userId: input.userId,
-      grantedById: actor.id,
-      amount: input.amount,
-      reason: input.reason,
-      note: input.note || null,
-      expiresAt,
-    },
-    select: { id: true },
+  const grant = await db.$transaction(async (tx) => {
+    if (stock) {
+      await tx.wildCardStock.update({
+        where: { id: stock.id },
+        data: { balance: { decrement: input.amount } },
+      })
+    }
+
+    return tx.wildCardGrant.create({
+      data: {
+        userId: input.userId,
+        grantedById: actor.id,
+        amount: input.amount,
+        reason: input.reason,
+        note: input.note || null,
+        expiresAt,
+      },
+      select: { id: true },
+    })
   })
 
   // Механика по сути денежная, поэтому каждая выдача в аудите

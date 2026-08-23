@@ -52,8 +52,13 @@ const SETTINGS: { key: string; value: unknown }[] = [
   { key: 'test.default_pass_threshold', value: 80 },
   // Границы цветовых зон в матрице обучения, %
   { key: 'test.color_bands', value: { danger: 60, warning: 80 } },
-  // Срок жизни Wild Card, дней (3 месяца)
+  // Срок жизни Wild Card, дней (3 месяца). Отсчёт идёт от момента выдачи
+  // сотруднику: на счету менеджера карты бессрочны
   { key: 'wildcard.ttl_days', value: 90 },
+  // Строгий режим склада: менеджер без заведённого счёта не может выдавать.
+  // По умолчанию выключен — счёт заводится в тот момент, когда GM впервые
+  // выдаёт менеджеру пачку карт
+  { key: 'wildcard.require_manager_stock', value: false },
   // За сколько дней предупреждать о сгорании карт
   { key: 'wildcard.expiry_warning_days', value: 14 },
   // Лимит выдачи Wild Card на человека в месяц. null = без лимита

@@ -19,7 +19,6 @@ const NAV: (ShellNavItem & { permission?: PermissionCode })[] = [
   { key: 'wildcards', href: '/wildcards' },
   { key: 'reports', href: '/reports', permission: 'report.view', planned: true },
   { key: 'settings', href: '/settings', permission: 'settings.view' },
-  { key: 'designSystem', href: '/design-system', permission: 'settings.view' },
 ]
 
 export default async function AppLayout({ children }: LayoutProps<'/'>) {

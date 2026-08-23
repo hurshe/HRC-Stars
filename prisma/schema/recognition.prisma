@@ -1,9 +1,39 @@
 // Wild Cards, ваучеры, награды (этап 5) и программы обучения
 // с сертификатами (этап 6).
 
-/// Начисление Wild Card. Хранится партиями, а не одним счётчиком: у каждой
-/// партии свой срок годности, и списывать нужно самые старые карты первыми,
-/// иначе свежие уйдут на ваучер, а старые сгорят.
+/// Карты на счету менеджера. Бессрочны: срок годности начинает идти
+/// только с момента выдачи сотруднику, а до этого карты просто лежат
+/// у менеджера, как физическая пачка в ящике стола.
+model WildCardStock {
+  id      String @id @default(cuid())
+  userId  String @unique
+  balance Int    @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  user        User                @relation("WildCardStockOwner", fields: [userId], references: [id], onDelete: Cascade)
+  allocations WildCardAllocation[]
+}
+
+/// Пополнение счёта менеджера. Отдельная таблица, а не просто изменение
+/// баланса: нужно видеть, кто и когда выдал менеджеру карты для раздачи.
+model WildCardAllocation {
+  id           String   @id @default(cuid())
+  stockId      String
+  allocatedById String
+  amount       Int
+  note         String?
+  allocatedAt  DateTime @default(now())
+
+  stock       WildCardStock @relation(fields: [stockId], references: [id], onDelete: Cascade)
+  allocatedBy User          @relation("WildCardAllocator", fields: [allocatedById], references: [id])
+
+  @@index([stockId])
+}
+
+/// Выдача Wild Card сотруднику. Хранится партиями, а не одним счётчиком:
+/// у каждой партии свой срок годности, и списывать нужно самые старые
+/// карты первыми, иначе свежие уйдут на ваучер, а старые сгорят.
 model WildCardGrant {
   id           String   @id @default(cuid())
   userId       String

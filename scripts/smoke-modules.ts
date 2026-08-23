@@ -10,6 +10,7 @@
   Запуск: npx tsx scripts/smoke-modules.ts
 */
 import 'dotenv/config'
+import { hash } from 'bcryptjs'
 import { db } from '../src/lib/db'
 import { getCurrentUser } from '../src/server/auth/session'
 import type { CurrentUser } from '../src/server/auth/session'
@@ -22,8 +23,10 @@ import {
 } from '../src/server/services/tests'
 import { getTrainingMatrix, cellKey } from '../src/server/services/training-matrix'
 import {
+  allocateToManager,
   approveVoucherRequest,
   getBalance,
+  getManagerStock,
   grantWildCards,
   requestVoucher,
 } from '../src/server/services/wildcards'
@@ -154,6 +157,76 @@ async function main() {
 
   console.log('\nWILD CARDS')
   console.log('─'.repeat(78))
+
+  // Ключевая проверка правки: на счету менеджера карты бессрочны,
+  // дата сгорания появляется только при выдаче сотруднику
+  // Если менеджера в базе нет, заводим — иначе проверку склада не выполнить,
+  // а это самая суть правки. Заодно появляется вторая учётка для ручных проверок
+  let manager = await db.user.findFirst({
+    where: { locationId: actor.locationId, role: { code: { in: ['MANAGER', 'SUPERVISOR'] } } },
+    select: { id: true, role: { select: { code: true, level: true } } },
+  })
+
+  if (!manager) {
+    const managerRole = await db.role.findFirstOrThrow({ where: { code: 'MANAGER' } })
+    manager = await db.user.create({
+      data: {
+        email: 'manager@hrcstars.local',
+        firstName: 'Robert',
+        lastName: 'Smith',
+        employeeNumber: 'HRC-01-1001',
+        passwordHash: await hash('HrcStars2026', 12),
+        status: 'ACTIVE',
+        locale: 'pl',
+        mustChangePassword: false,
+        roleId: managerRole.id,
+        locationId: actor.locationId,
+        emailVerifiedAt: new Date(),
+      },
+      select: { id: true, role: { select: { code: true, level: true } } },
+    })
+    console.log('  ...   создан менеджер manager@hrcstars.local / HrcStars2026')
+  }
+
+  if (manager) {
+    const allocated = await allocateToManager(actor, { managerId: manager.id, amount: 20 })
+    check('карты выданы на счёт менеджера', allocated.ok)
+
+    const stock = await getManagerStock(manager.id)
+    check('счёт менеджера заведён', stock?.balance === 20, `на счету ${stock?.balance}`)
+
+    const managerActor: CurrentUser = {
+      ...actor,
+      id: manager.id,
+      role: { ...actor.role, code: manager.role.code, level: manager.role.level },
+    }
+
+    const fromStock = await grantWildCards(managerActor, {
+      userId: employee.id,
+      amount: 3,
+      reason: 'Stock test',
+    })
+    check('менеджер выдал карты со своего счёта', fromStock.ok)
+    check(
+      'срок годности появился только при выдаче сотруднику',
+      fromStock.ok && fromStock.expiresAt > new Date(),
+    )
+
+    const afterStock = await getManagerStock(manager.id)
+    check('счёт менеджера уменьшился', afterStock?.balance === 17, `осталось ${afterStock?.balance}`)
+
+    const tooMuch = await grantWildCards(managerActor, {
+      userId: employee.id,
+      amount: 999,
+      reason: 'Should fail',
+    })
+    check(
+      'больше, чем есть на счету, выдать нельзя',
+      !tooMuch.ok && tooMuch.error === 'notEnoughStock',
+    )
+  } else {
+    console.log('  ?     менеджера нет в базе — проверка счёта пропущена')
+  }
 
   const before = await getBalance(employee.id)
   const granted = await grantWildCards(actor, {

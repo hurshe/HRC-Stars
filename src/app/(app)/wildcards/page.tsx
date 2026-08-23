@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { getPermissions, requireUser } from '@/server/auth/session'
 import {
   getBalance,
+  getManagerStock,
   grantReport,
   listMyWildCards,
   listPendingRequests,
@@ -12,7 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, StatCard } from '@/components/ui/card'
 import { EmptyState, TBody, TD, TH, THead, TR, Table, TableWrapper } from '@/components/ui/table'
-import { GrantPanel, RequestButton, RequestDecision } from './wildcard-panels'
+import { AllocatePanel, GrantPanel, RequestButton, RequestDecision } from './wildcard-panels'
 
 export default async function WildCardsPage() {
   const actor = await requireUser()
@@ -23,9 +24,11 @@ export default async function WildCardsPage() {
   const canGrant = permissions.has('wildcard.grant')
   const canApprove = permissions.has('wildcard.request.approve')
   const canSeeReport = permissions.has('wildcard.report.view')
+  const canAllocate = permissions.has('wildcard.allocate')
 
-  const [balance, vouchers, mine, pending, report, employees] = await Promise.all([
+  const [balance, stock, vouchers, mine, pending, report, employees, managers] = await Promise.all([
     getBalance(actor.id),
+    canGrant ? getManagerStock(actor.id) : Promise.resolve(null),
     listVoucherTypes(actor),
     listMyWildCards(actor),
     canApprove ? listPendingRequests(actor) : Promise.resolve([]),
@@ -40,6 +43,25 @@ export default async function WildCardsPage() {
           },
           orderBy: { lastName: 'asc' },
           select: { id: true, firstName: true, lastName: true },
+        })
+      : Promise.resolve([]),
+    // Пополнять счёт можно только тем, кто ниже уровнем
+    canAllocate
+      ? db.user.findMany({
+          where: {
+            locationId: actor.locationId,
+            deletedAt: null,
+            status: { in: ['ACTIVE', 'ON_LEAVE'] },
+            role: { level: { lt: actor.role.level } },
+          },
+          orderBy: { lastName: 'asc' },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            role: { select: { code: true } },
+            wildCardStock: { select: { balance: true } },
+          },
         })
       : Promise.resolve([]),
   ])
@@ -147,8 +169,39 @@ export default async function WildCardsPage() {
 
       {canGrant && (
         <section className="space-y-3">
+          <div>
+            <h2 className="font-display text-lg font-bold text-foreground">{t('stock.title')}</h2>
+            <p className="mt-0.5 text-sm text-muted-foreground">{t('stock.hint')}</p>
+          </div>
+
+          {stock ? (
+            <Card className="flex items-center justify-between gap-3 p-4">
+              <span className="text-sm text-muted-foreground">{t('stock.balance')}</span>
+              <span className="font-display text-2xl font-bold text-foreground">
+                {stock.balance}
+              </span>
+            </Card>
+          ) : (
+            <p className="text-sm text-muted-foreground">{t('stock.none')}</p>
+          )}
+
           <h2 className="font-display text-lg font-bold text-foreground">{t('grant.title')}</h2>
           <GrantPanel employees={employees} />
+        </section>
+      )}
+
+      {canAllocate && (
+        <section className="space-y-3">
+          <h2 className="font-display text-lg font-bold text-foreground">{t('stock.allocate')}</h2>
+          <AllocatePanel
+            managers={managers.map((manager) => ({
+              id: manager.id,
+              firstName: manager.firstName,
+              lastName: manager.lastName,
+              role: manager.role.code,
+              balance: manager.wildCardStock?.balance ?? 0,
+            }))}
+          />
         </section>
       )}
 

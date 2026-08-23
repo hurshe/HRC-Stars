@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { requirePermission, requireUser } from '@/server/auth/session'
 import {
+  allocateToManager,
   approveVoucherRequest,
   grantWildCards,
   markVoucherUsed,
@@ -26,6 +27,24 @@ export async function grantWildCardsAction(
     userId: String(formData.get('userId') ?? ''),
     amount: Number(formData.get('amount') ?? 0),
     reason,
+    note: String(formData.get('note') ?? '') || undefined,
+  })
+
+  if (!result.ok) return { error: result.error }
+
+  revalidatePath('/wildcards')
+  return { granted: Number(formData.get('amount') ?? 0) }
+}
+
+export async function allocateToManagerAction(
+  _prev: WildCardFormState,
+  formData: FormData,
+): Promise<WildCardFormState> {
+  const actor = await requirePermission('wildcard.allocate')
+
+  const result = await allocateToManager(actor, {
+    managerId: String(formData.get('managerId') ?? ''),
+    amount: Number(formData.get('amount') ?? 0),
     note: String(formData.get('note') ?? '') || undefined,
   })
 

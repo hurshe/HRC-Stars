@@ -660,7 +660,22 @@
       "invalidAmount": "The number of cards must be greater than zero",
       "insufficientBalance": "Not enough cards",
       "limitReached": "Limit for this voucher reached",
-      "monthlyLimitReached": "Monthly granting limit reached"
+      "monthlyLimitReached": "Monthly granting limit reached",
+      "noStock": "You have no card account — ask the director for an allocation",
+      "notEnoughStock": "Not enough cards on your account",
+      "managerTooHigh": "You cannot allocate cards to someone at the same or a higher level"
+    },
+    "stock": {
+      "title": "Cards on your account",
+      "hint": "Cards on a manager account never expire. The 3-month clock starts only when a card is issued to an employee",
+      "balance": "On account",
+      "none": "You have no allocated cards — grant without a stock limit",
+      "allocate": "Allocate cards to a manager",
+      "manager": "Manager",
+      "amount": "Number of cards",
+      "note": "Note",
+      "submit": "Allocate",
+      "allocated": "On account: {balance}"
     }
   }
 }

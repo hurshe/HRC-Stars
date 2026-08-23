@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Field, FormError, Input, Select, Textarea } from '@/components/ui/field'
 import {
+  allocateToManagerAction,
   decideVoucherAction,
   grantWildCardsAction,
   markVoucherUsedAction,
@@ -63,6 +64,66 @@ export function GrantPanel({
           <summary className="cursor-pointer text-xs text-muted-foreground">{t('note')}</summary>
           <Textarea name="note" className="mt-2" />
         </details>
+
+        {state.error && <FormError>{tErrors(state.error)}</FormError>}
+      </form>
+    </Card>
+  )
+}
+
+/// Пополнение счёта менеджера. Карты здесь бессрочные — дата сгорания
+/// появится только когда менеджер отдаст их сотруднику
+export function AllocatePanel({
+  managers,
+}: {
+  managers: { id: string; firstName: string; lastName: string; role: string; balance: number }[]
+}) {
+  const t = useTranslations('wildcards.stock')
+  const tErrors = useTranslations('wildcards.errors')
+  const [state, formAction, pending] = useActionState(allocateToManagerAction, initialState)
+
+  return (
+    <Card className="p-4">
+      <form action={formAction} className="flex flex-wrap items-end gap-3">
+        <div className="min-w-52 flex-1">
+          <Field label={t('manager')} htmlFor="managerId" required>
+            <Select id="managerId" name="managerId" required defaultValue="">
+              <option value="" disabled>
+                —
+              </option>
+              {managers.map((manager) => (
+                <option key={manager.id} value={manager.id}>
+                  {manager.firstName} {manager.lastName} · {manager.role} ·{' '}
+                  {t('allocated', { balance: manager.balance })}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+
+        <div className="w-28">
+          <Field label={t('amount')} htmlFor="allocate-amount" required>
+            <Input
+              id="allocate-amount"
+              name="amount"
+              type="number"
+              min={1}
+              max={500}
+              defaultValue={10}
+              required
+            />
+          </Field>
+        </div>
+
+        <div className="min-w-52 flex-1">
+          <Field label={t('note')} htmlFor="allocate-note">
+            <Input id="allocate-note" name="note" />
+          </Field>
+        </div>
+
+        <Button type="submit" loading={pending}>
+          {t('submit')}
+        </Button>
 
         {state.error && <FormError>{tErrors(state.error)}</FormError>}
       </form>
