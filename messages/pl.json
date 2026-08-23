@@ -80,7 +80,8 @@
     "reports": "Raporty",
     "settings": "Ustawienia",
     "ariaLabel": "Nawigacja główna",
-    "comingSoon": "Wkrótce"
+    "comingSoon": "Wkrótce",
+    "designSystem": "System projektowy"
   },
   "dashboard": {
     "title": "Pulpit",
@@ -118,6 +119,119 @@
       "expires": "Link jest ważny do {date}.",
       "fallback": "Jeśli przycisk nie działa, skopiuj ten adres do przeglądarki:",
       "ignore": "Jeśli nie spodziewasz się tej wiadomości, po prostu ją zignoruj — bez ustawienia hasła konto pozostanie nieaktywne."
+    }
+  },
+  "employees": {
+    "title": "Pracownicy",
+    "subtitle": "Zarządzaj zespołem i dostępem do systemu",
+    "add": "Dodaj pracownika",
+    "searchPlaceholder": "Szukaj po imieniu, e-mailu lub numerze",
+    "allPositions": "Wszystkie stanowiska",
+    "allStatuses": "Wszystkie statusy",
+    "filter": "Filtruj",
+    "results": "{count, plural, =0 {Brak wyników} one {# pracownik} few {# pracowników} other {# pracowników}}",
+    "table": {
+      "name": "Imię i nazwisko",
+      "number": "Numer",
+      "positions": "Stanowisko",
+      "role": "Rola",
+      "status": "Status",
+      "open": "Otwórz"
+    },
+    "empty": {
+      "title": "Nie znaleziono pracowników",
+      "description": "Zmień filtry albo dodaj pierwszego pracownika."
+    },
+    "status": {
+      "INVITED": "Zaproszony",
+      "ACTIVE": "Aktywny",
+      "ON_LEAVE": "Nieobecny",
+      "SUSPENDED": "Zawieszony",
+      "ARCHIVED": "Archiwum"
+    },
+    "gender": {
+      "FEMALE": "Kobieta",
+      "MALE": "Mężczyzna",
+      "OTHER": "Inna",
+      "NOT_SPECIFIED": "Nie podano"
+    },
+    "employmentType": {
+      "FULL_TIME": "Pełny etat",
+      "PART_TIME": "Część etatu",
+      "CONTRACT": "Umowa zlecenie",
+      "STUDENT": "Student",
+      "SEASONAL": "Sezonowy"
+    },
+    "new": {
+      "title": "Nowy pracownik",
+      "subtitle": "Konto zostanie utworzone, a pracownik sam ustawi sobie hasło",
+      "sectionBasics": "Dane podstawowe",
+      "sectionWork": "Stanowisko i dostęp",
+      "sectionPersonal": "Dane osobowe",
+      "personalNote": "Te pola są szyfrowane w bazie. Każdy podgląd trafia do dziennika audytu.",
+      "firstName": "Imię",
+      "lastName": "Nazwisko",
+      "email": "Adres e-mail",
+      "employeeNumber": "Numer pracownika",
+      "employeeNumberHint": "Zostaw puste — system nada numer automatycznie",
+      "hiredAt": "Data zatrudnienia",
+      "role": "Rola w systemie",
+      "positions": "Stanowiska",
+      "positionsHint": "Można wybrać kilka. Pierwsze wybrane jest główne",
+      "locale": "Język interfejsu",
+      "phone": "Telefon",
+      "dateOfBirth": "Data urodzenia",
+      "address": "Adres",
+      "personalId": "PESEL / numer dokumentu",
+      "emergencyContactName": "Kontakt alarmowy — imię i nazwisko",
+      "emergencyContactPhone": "Kontakt alarmowy — telefon",
+      "gender": "Płeć",
+      "employmentType": "Forma zatrudnienia",
+      "notes": "Notatki",
+      "inviteMethod": "Sposób przekazania dostępu",
+      "invite": {
+        "EMAIL_LINK": "Link w e-mailu",
+        "ACTIVATION_CODE": "Kod aktywacyjny do podyktowania",
+        "NONE": "Na razie bez zaproszenia"
+      },
+      "submit": "Utwórz konto",
+      "submitting": "Tworzenie…",
+      "notSelected": "— nie wybrano —"
+    },
+    "created": {
+      "title": "Konto utworzone",
+      "emailSent": "Zaproszenie wysłano na {email}.",
+      "emailFailed": "Nie udało się wysłać e-maila. Skopiuj link i przekaż go pracownikowi.",
+      "linkLabel": "Link do zaproszenia",
+      "codeLabel": "Kod aktywacyjny",
+      "codeHint": "Podyktuj kod pracownikowi. Ważny do {date}.",
+      "noInvite": "Zaproszenie nie zostało wysłane. Możesz je wysłać z profilu pracownika.",
+      "toProfile": "Otwórz profil",
+      "addAnother": "Dodaj kolejnego"
+    },
+    "errors": {
+      "emailTaken": "Ten adres e-mail jest już zajęty",
+      "employeeNumberTaken": "Ten numer pracownika jest już zajęty",
+      "roleTooHigh": "Nie możesz nadać roli wyższej lub równej własnej",
+      "invalidRole": "Nieprawidłowa rola",
+      "notFound": "Nie znaleziono pracownika",
+      "alreadyActive": "Konto jest już aktywne",
+      "formInvalid": "Sprawdź zaznaczone pola"
+    },
+    "profile": {
+      "backToList": "Wszyscy pracownicy",
+      "hiredAt": "Data zatrudnienia",
+      "lastLogin": "Ostatnie logowanie",
+      "never": "nigdy",
+      "role": "Rola",
+      "personalData": "Dane osobowe",
+      "personalDataHidden": "Nie masz uprawnień do danych osobowych tego pracownika.",
+      "personalDataEmpty": "Dane osobowe nie zostały uzupełnione.",
+      "pendingInvite": "Zaproszenie oczekuje, ważne do {date}",
+      "resendEmail": "Wyślij ponownie e-mail",
+      "generateCode": "Wygeneruj kod",
+      "trainerOn": "Nadaj oznaczenie trenera",
+      "trainerOff": "Zdejmij oznaczenie trenera"
     }
   }
 }

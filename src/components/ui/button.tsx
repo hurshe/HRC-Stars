@@ -52,11 +52,22 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const Component = asChild ? Slot : 'button'
+  const classes = cn(button({ variant, size, block }), className)
+
+  // Slot из Radix подменяет собой единственного потомка, поэтому обёртка
+  // с индикатором загрузки сюда не подходит — она даёт двух потомков и падает.
+  // Ссылке индикатор и не нужен: она не отправляет форму.
+  if (asChild) {
+    return (
+      <Slot className={classes} {...props}>
+        {children}
+      </Slot>
+    )
+  }
 
   return (
-    <Component
-      className={cn(button({ variant, size, block }), className)}
+    <button
+      className={classes}
       disabled={disabled || loading}
       // Скринридер должен узнать о загрузке, а не только увидеть крутилку
       aria-busy={loading || undefined}
@@ -64,6 +75,6 @@ export function Button({
     >
       {loading && <Loader2 className="size-4 animate-spin" aria-hidden />}
       {children}
-    </Component>
+    </button>
   )
 }
