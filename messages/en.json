@@ -89,7 +89,12 @@
     "yourRole": "Your role",
     "yourLocation": "Location",
     "placeholder": "Modules will appear here in the next phases.",
-    "permissions": "Permissions"
+    "permissions": "Permissions",
+    "yours": "Your items",
+    "team": "Team",
+    "overdueTasks": "Overdue tasks",
+    "pendingVouchers": "Voucher requests",
+    "expiringDocuments": "{count, plural, one {# document expires within 30 days} other {# documents expire within 30 days}}"
   },
   "errors": {
     "forbidden": {
@@ -468,6 +473,194 @@
       "noQuestions": "Add at least one question",
       "locked": "A published version cannot be changed",
       "invalidAnswer": "Check the correct answer"
+    }
+  },
+  "tasks": {
+    "title": "Tasks",
+    "subtitle": "Tasks go down the hierarchy and are ticked off by the assignee",
+    "add": "New task",
+    "tabs": {
+      "assigned": "My tasks",
+      "authored": "Created by me",
+      "all": "All"
+    },
+    "table": {
+      "task": "Task",
+      "assignee": "Assignee",
+      "author": "Author",
+      "priority": "Priority",
+      "due": "Due",
+      "status": "Status"
+    },
+    "status": {
+      "NEW": "New",
+      "IN_PROGRESS": "In progress",
+      "DONE": "Done",
+      "ACCEPTED": "Accepted",
+      "CANCELLED": "Cancelled"
+    },
+    "priority": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "empty": {
+      "title": "No tasks",
+      "description": "Nothing is waiting to be done."
+    },
+    "new": {
+      "title": "New task",
+      "taskTitle": "Title",
+      "description": "Description",
+      "assignTo": "Assignee",
+      "due": "Due date",
+      "priority": "Priority",
+      "requiresApproval": "Requires acceptance by the author",
+      "requiresApprovalHint": "Without it, ticking off by the assignee closes the task",
+      "repeatEvery": "Repeat every (days)",
+      "submit": "Create task"
+    },
+    "detail": {
+      "take": "Start working",
+      "complete": "Done",
+      "accept": "Accept",
+      "cancel": "Cancel task",
+      "comments": "Comments",
+      "addComment": "Add a comment",
+      "send": "Send",
+      "createdBy": "Created by",
+      "overdue": "Overdue"
+    },
+    "errors": {
+      "notFound": "Task not found",
+      "invalidTarget": "Choose an assignee",
+      "assigneeTooHigh": "You cannot assign a task to someone at the same or a higher level",
+      "onlyAuthorAccepts": "Only the author can accept the task",
+      "notYourTask": "This is not your task"
+    }
+  },
+  "checklists": {
+    "title": "Checklists",
+    "subtitle": "Shift opening and closing, sanitation, deliveries",
+    "today": "Today",
+    "templates": "Templates",
+    "add": "New template",
+    "open": "Open",
+    "continue": "Continue",
+    "review": "Review",
+    "status": {
+      "NOT_STARTED": "Not started",
+      "IN_PROGRESS": "In progress",
+      "SUBMITTED": "Submitted",
+      "VERIFIED": "Verified",
+      "OVERDUE": "Overdue"
+    },
+    "progress": "{done} of {total}",
+    "submit": "Submit checklist",
+    "verify": "Verify",
+    "submitted": "Submitted {date}",
+    "verifiedBy": "Verified by {name}",
+    "empty": {
+      "title": "No checklists for today",
+      "description": "Create a template to get started."
+    },
+    "itemTypes": {
+      "CHECKBOX": "Checkbox",
+      "NUMBER": "Number",
+      "TEXT": "Text",
+      "PHOTO": "Photo",
+      "SIGNATURE": "Signature"
+    },
+    "new": {
+      "title": "New template",
+      "name": "Name",
+      "category": "Category",
+      "frequency": "Frequency",
+      "shift": "Shift",
+      "position": "Position",
+      "requiresVerification": "Requires supervisor verification",
+      "items": "Items",
+      "itemsHint": "One item per line",
+      "submit": "Create template"
+    },
+    "frequency": {
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly",
+      "ONCE": "One-off"
+    },
+    "errors": {
+      "notFound": "Not found",
+      "requiredMissing": "Fill in all required items",
+      "alreadySubmitted": "This checklist has already been submitted"
+    }
+  },
+  "wildcards": {
+    "title": "Wild Cards",
+    "subtitle": "Reward the team and exchange cards for vouchers",
+    "tabs": {
+      "my": "My cards",
+      "grant": "Grant",
+      "requests": "Requests",
+      "report": "Report"
+    },
+    "balance": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "expiring": "Expiring soon",
+      "expiringAt": "Next expiry: {date}"
+    },
+    "grant": {
+      "title": "Grant Wild Card",
+      "employee": "Employee",
+      "amount": "Number of cards",
+      "reason": "Reason",
+      "reasonHint": "The reason is mandatory — without it the mechanic loses meaning",
+      "note": "Note",
+      "submit": "Grant"
+    },
+    "catalog": {
+      "title": "Voucher catalogue",
+      "cost": "{cost} cards",
+      "request": "Exchange",
+      "empty": "The catalogue is empty"
+    },
+    "history": {
+      "title": "History",
+      "granted": "Granted",
+      "reason": "Reason",
+      "expires": "Expires",
+      "by": "Granted by"
+    },
+    "requests": {
+      "title": "Voucher requests",
+      "empty": "No pending requests",
+      "approve": "Approve",
+      "reject": "Reject",
+      "markUsed": "Mark as used",
+      "requestedAt": "Requested"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "USED": "Used",
+      "EXPIRED": "Expired"
+    },
+    "report": {
+      "title": "Who granted how much",
+      "granter": "Manager",
+      "cards": "Cards",
+      "times": "Times",
+      "period": "Last 30 days",
+      "empty": "No grants in this period"
+    },
+    "errors": {
+      "notFound": "Not found",
+      "invalidAmount": "The number of cards must be greater than zero",
+      "insufficientBalance": "Not enough cards",
+      "limitReached": "Limit for this voucher reached",
+      "monthlyLimitReached": "Monthly granting limit reached"
     }
   }
 }

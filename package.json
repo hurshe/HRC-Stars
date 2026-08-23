@@ -15,7 +15,9 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "check:contrast": "tsx scripts/check-contrast.ts",
-    "check:guards": "tsx scripts/check-permission-guards.ts"
+    "check:guards": "tsx scripts/check-permission-guards.ts",
+    "check:smoke": "tsx scripts/smoke-modules.ts",
+    "check:all": "npm run typecheck && npm run lint && npm run check:contrast && npm run check:guards"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1116.0",

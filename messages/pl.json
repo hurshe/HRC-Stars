@@ -89,7 +89,12 @@
     "yourRole": "Twoja rola",
     "yourLocation": "Lokalizacja",
     "placeholder": "Moduły pojawią się tutaj w kolejnych etapach.",
-    "permissions": "Uprawnienia"
+    "permissions": "Uprawnienia",
+    "yours": "Twoje sprawy",
+    "team": "Zespół",
+    "overdueTasks": "Zadania po terminie",
+    "pendingVouchers": "Wnioski o vouchery",
+    "expiringDocuments": "{count, plural, one {# dokument wygasa w ciągu 30 dni} few {# dokumenty wygasają w ciągu 30 dni} other {# dokumentów wygasa w ciągu 30 dni}}"
   },
   "errors": {
     "forbidden": {
@@ -468,6 +473,194 @@
       "noQuestions": "Dodaj przynajmniej jedno pytanie",
       "locked": "Opublikowanej wersji nie można zmieniać",
       "invalidAnswer": "Sprawdź poprawną odpowiedź"
+    }
+  },
+  "tasks": {
+    "title": "Zadania",
+    "subtitle": "Zadania idą w dół hierarchii i są odhaczane przez wykonawcę",
+    "add": "Nowe zadanie",
+    "tabs": {
+      "assigned": "Moje zadania",
+      "authored": "Wystawione przeze mnie",
+      "all": "Wszystkie"
+    },
+    "table": {
+      "task": "Zadanie",
+      "assignee": "Wykonawca",
+      "author": "Autor",
+      "priority": "Priorytet",
+      "due": "Termin",
+      "status": "Status"
+    },
+    "status": {
+      "NEW": "Nowe",
+      "IN_PROGRESS": "W trakcie",
+      "DONE": "Wykonane",
+      "ACCEPTED": "Przyjęte",
+      "CANCELLED": "Anulowane"
+    },
+    "priority": {
+      "LOW": "Niski",
+      "MEDIUM": "Średni",
+      "HIGH": "Wysoki"
+    },
+    "empty": {
+      "title": "Brak zadań",
+      "description": "Nic nie czeka na wykonanie."
+    },
+    "new": {
+      "title": "Nowe zadanie",
+      "taskTitle": "Tytuł",
+      "description": "Opis",
+      "assignTo": "Wykonawca",
+      "due": "Termin",
+      "priority": "Priorytet",
+      "requiresApproval": "Wymaga przyjęcia przez autora",
+      "requiresApprovalHint": "Bez tego odhaczenie przez wykonawcę kończy zadanie",
+      "repeatEvery": "Powtarzać co (dni)",
+      "submit": "Utwórz zadanie"
+    },
+    "detail": {
+      "take": "Biorę w pracę",
+      "complete": "Wykonane",
+      "accept": "Przyjmij",
+      "cancel": "Anuluj zadanie",
+      "comments": "Komentarze",
+      "addComment": "Dodaj komentarz",
+      "send": "Wyślij",
+      "createdBy": "Utworzył",
+      "overdue": "Po terminie"
+    },
+    "errors": {
+      "notFound": "Nie znaleziono zadania",
+      "invalidTarget": "Wybierz wykonawcę",
+      "assigneeTooHigh": "Nie możesz wystawić zadania osobie na tym samym lub wyższym poziomie",
+      "onlyAuthorAccepts": "Zadanie przyjmuje tylko autor",
+      "notYourTask": "To nie jest Twoje zadanie"
+    }
+  },
+  "checklists": {
+    "title": "Listy kontrolne",
+    "subtitle": "Otwarcie i zamknięcie zmiany, sanitarne, przyjęcie towaru",
+    "today": "Na dziś",
+    "templates": "Szablony",
+    "add": "Nowy szablon",
+    "open": "Otwórz",
+    "continue": "Kontynuuj",
+    "review": "Podgląd",
+    "status": {
+      "NOT_STARTED": "Nierozpoczęta",
+      "IN_PROGRESS": "W trakcie",
+      "SUBMITTED": "Wysłana",
+      "VERIFIED": "Zweryfikowana",
+      "OVERDUE": "Po terminie"
+    },
+    "progress": "{done} z {total}",
+    "submit": "Wyślij listę",
+    "verify": "Zatwierdź",
+    "submitted": "Wysłano {date}",
+    "verifiedBy": "Zatwierdził {name}",
+    "empty": {
+      "title": "Brak list kontrolnych na dziś",
+      "description": "Utwórz szablon, aby zacząć."
+    },
+    "itemTypes": {
+      "CHECKBOX": "Odhaczenie",
+      "NUMBER": "Liczba",
+      "TEXT": "Tekst",
+      "PHOTO": "Zdjęcie",
+      "SIGNATURE": "Podpis"
+    },
+    "new": {
+      "title": "Nowy szablon",
+      "name": "Nazwa",
+      "category": "Kategoria",
+      "frequency": "Częstotliwość",
+      "shift": "Zmiana",
+      "position": "Stanowisko",
+      "requiresVerification": "Wymaga zatwierdzenia przez przełożonego",
+      "items": "Pozycje",
+      "itemsHint": "Każda pozycja w nowej linii",
+      "submit": "Utwórz szablon"
+    },
+    "frequency": {
+      "DAILY": "Codziennie",
+      "WEEKLY": "Co tydzień",
+      "MONTHLY": "Co miesiąc",
+      "ONCE": "Jednorazowo"
+    },
+    "errors": {
+      "notFound": "Nie znaleziono",
+      "requiredMissing": "Uzupełnij wszystkie wymagane pozycje",
+      "alreadySubmitted": "Lista została już wysłana"
+    }
+  },
+  "wildcards": {
+    "title": "Wild Cards",
+    "subtitle": "Nagradzaj zespół i wymieniaj karty na vouchery",
+    "tabs": {
+      "my": "Moje karty",
+      "grant": "Przyznaj",
+      "requests": "Wnioski",
+      "report": "Raport"
+    },
+    "balance": {
+      "available": "Dostępne",
+      "reserved": "Zarezerwowane",
+      "expiring": "Wygasa wkrótce",
+      "expiringAt": "Najbliższe wygaśnięcie: {date}"
+    },
+    "grant": {
+      "title": "Przyznaj Wild Card",
+      "employee": "Pracownik",
+      "amount": "Liczba kart",
+      "reason": "Powód",
+      "reasonHint": "Powód jest obowiązkowy — bez niego mechanika traci sens",
+      "note": "Notatka",
+      "submit": "Przyznaj"
+    },
+    "catalog": {
+      "title": "Katalog voucherów",
+      "cost": "{cost} kart",
+      "request": "Wymień",
+      "empty": "Katalog jest pusty"
+    },
+    "history": {
+      "title": "Historia",
+      "granted": "Przyznano",
+      "reason": "Powód",
+      "expires": "Wygasa",
+      "by": "Przyznał"
+    },
+    "requests": {
+      "title": "Wnioski o vouchery",
+      "empty": "Brak oczekujących wniosków",
+      "approve": "Zatwierdź",
+      "reject": "Odrzuć",
+      "markUsed": "Oznacz jako wykorzystany",
+      "requestedAt": "Złożono"
+    },
+    "status": {
+      "PENDING": "Oczekuje",
+      "APPROVED": "Zatwierdzony",
+      "REJECTED": "Odrzucony",
+      "USED": "Wykorzystany",
+      "EXPIRED": "Wygasł"
+    },
+    "report": {
+      "title": "Kto ile przyznał",
+      "granter": "Menedżer",
+      "cards": "Karty",
+      "times": "Razy",
+      "period": "Ostatnie 30 dni",
+      "empty": "Brak przyznań w tym okresie"
+    },
+    "errors": {
+      "notFound": "Nie znaleziono",
+      "invalidAmount": "Liczba kart musi być większa od zera",
+      "insufficientBalance": "Za mało kart",
+      "limitReached": "Osiągnięto limit tego vouchera",
+      "monthlyLimitReached": "Osiągnięto miesięczny limit przyznawania"
     }
   }
 }

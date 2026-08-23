@@ -64,6 +64,33 @@ const SETTINGS: { key: string; value: unknown }[] = [
   { key: 'invitation.code_ttl_hours', value: 24 },
 ]
 
+// ─── Обязательные документы сотрудника ────────────────────────────────────
+//
+// Взято из правой части листа SERVER TEST SCORES: именно эти колонки
+// менеджер сейчас закрашивает вручную.
+
+const DOCUMENT_REQUIREMENTS = [
+  { code: 'CV', nameEn: 'CV', namePl: 'CV', sortOrder: 10 },
+  { code: 'INTERVIEW', nameEn: 'Interview I & II', namePl: 'Rozmowa I i II', sortOrder: 20 },
+  { code: 'JOB_DESCRIPTION', nameEn: 'Job Description', namePl: 'Opis stanowiska', sortOrder: 30 },
+  { code: 'LEARNING_TECH_POLICY', nameEn: 'Learning Technology Policy', namePl: 'Polityka technologii szkoleniowych', sortOrder: 40 },
+  { code: 'BSP_VISUAL', nameEn: 'BSP Visual Validation', namePl: 'BSP Visual Validation', sortOrder: 50 },
+  { code: 'BSP_LAST_PAGE', nameEn: 'BSP Last Page', namePl: 'BSP Last Page', sortOrder: 60 },
+  { code: 'EMPLOYEE_HANDBOOK', nameEn: 'Employee Handbook', namePl: 'Regulamin pracownika', sortOrder: 70 },
+  { code: 'ORIENTATION_SIGN_OFF', nameEn: 'Orientation Sign Off Sheet', namePl: 'Potwierdzenie orientacji', sortOrder: 80 },
+  { code: 'REX_FORM', nameEn: 'REX form', namePl: 'Formularz REX', sortOrder: 90, validityDays: 365 },
+  { code: 'MEDICAL', nameEn: 'Medical certificate', namePl: 'Badania lekarskie', sortOrder: 100, validityDays: 365 },
+] as const
+
+// ─── Каталог ваучеров ─────────────────────────────────────────────────────
+
+const VOUCHER_TYPES = [
+  { name: 'Lunch', description: 'Lunch na zmianie', cost: 3, sortOrder: 10 },
+  { name: 'Breakfast', description: 'Śniadanie na zmianie', cost: 2, sortOrder: 20 },
+  { name: '50% off food', description: '50% zniżki na jedzenie', cost: 5, validityDays: 30, sortOrder: 30 },
+  { name: '25% off Rock Shop', description: '25% zniżki w sklepie', cost: 4, validityDays: 30, sortOrder: 40 },
+] as const
+
 // ─── Запуск ───────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -162,6 +189,43 @@ async function main() {
     })
   }
   console.log(`  настройки: ${SETTINGS.length}`)
+
+  for (const requirement of DOCUMENT_REQUIREMENTS) {
+    const data = {
+      nameEn: requirement.nameEn,
+      namePl: requirement.namePl,
+      sortOrder: requirement.sortOrder,
+      validityDays: 'validityDays' in requirement ? requirement.validityDays : null,
+    }
+    await db.documentRequirement.upsert({
+      where: { locationId_code: { locationId: location.id, code: requirement.code } },
+      update: data,
+      create: { locationId: location.id, code: requirement.code, ...data },
+    })
+  }
+  console.log(`  обязательные документы: ${DOCUMENT_REQUIREMENTS.length}`)
+
+  // Каталог ваучеров создаётся один раз: дальше его ведёт менеджер,
+  // и повторный сид не должен затирать его правки
+  for (const voucher of VOUCHER_TYPES) {
+    const existing = await db.voucherType.findFirst({
+      where: { locationId: location.id, name: voucher.name },
+      select: { id: true },
+    })
+    if (!existing) {
+      await db.voucherType.create({
+        data: {
+          locationId: location.id,
+          name: voucher.name,
+          description: voucher.description,
+          cost: voucher.cost,
+          validityDays: 'validityDays' in voucher ? voucher.validityDays : null,
+          sortOrder: voucher.sortOrder,
+        },
+      })
+    }
+  }
+  console.log(`  ваучеры: ${VOUCHER_TYPES.length}`)
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL
   const adminPassword = process.env.SEED_ADMIN_PASSWORD
