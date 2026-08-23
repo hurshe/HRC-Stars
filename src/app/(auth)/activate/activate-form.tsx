@@ -50,8 +50,8 @@ export function ActivateForm({
       )}
 
       {knownEmail && (
-        <p className="text-sm text-text-muted">
-          <span className="font-medium text-text">{knownEmail}</span>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{knownEmail}</span>
         </p>
       )}
 

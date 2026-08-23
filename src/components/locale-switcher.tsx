@@ -26,7 +26,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
           onClick={() => startTransition(() => setLocale(locale))}
           className={cn(
             'rounded-[calc(var(--radius-control)-2px)] px-3 py-1.5 text-xs font-medium transition-colors',
-            locale === current ? 'bg-accent text-accent-text' : 'text-text-muted hover:text-text',
+            locale === current ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground',
             pending && 'opacity-60',
           )}
         >

@@ -17,7 +17,7 @@ export default async function ActivatePage({ searchParams }: PageProps<'/activat
   if (check && !check.ok) {
     return (
       <>
-        <h1 className="text-xl font-semibold text-text">{t('title')}</h1>
+        <h1 className="text-xl font-semibold text-foreground">{t('title')}</h1>
         <div className="mt-6">
           <FormError>{tError(check.error)}</FormError>
         </div>
@@ -27,8 +27,8 @@ export default async function ActivatePage({ searchParams }: PageProps<'/activat
 
   return (
     <>
-      <h1 className="text-xl font-semibold text-text">{t('title')}</h1>
-      <p className="mt-1 mb-6 text-sm text-text-muted">{t('subtitle')}</p>
+      <h1 className="text-xl font-semibold text-foreground">{t('title')}</h1>
+      <p className="mt-1 mb-6 text-sm text-muted-foreground">{t('subtitle')}</p>
       <ActivateForm token={token} knownEmail={check?.ok ? check.email : null} />
     </>
   )

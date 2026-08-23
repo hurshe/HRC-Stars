@@ -29,7 +29,7 @@ export function AppNav({ items }: { items: NavItem[] }) {
               // В подпись входит и название модуля: иначе скринридер прочитает
               // только «Wkrótce», и станет непонятно, о каком разделе речь
               title={`${t(item.key)} — ${t('comingSoon')}`}
-              className="shrink-0 cursor-default rounded-(--radius-control) px-3 py-2 text-sm text-text-muted/50"
+              className="shrink-0 cursor-default rounded-(--radius-control) px-3 py-2 text-sm text-muted-foreground/50"
             >
               {t(item.key)}
             </span>
@@ -43,7 +43,7 @@ export function AppNav({ items }: { items: NavItem[] }) {
             aria-current={active ? 'page' : undefined}
             className={cn(
               'shrink-0 rounded-(--radius-control) px-3 py-2 text-sm font-medium transition-colors',
-              active ? 'bg-surface-muted text-text' : 'text-text-muted hover:bg-surface-muted hover:text-text',
+              active ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
             )}
           >
             {t(item.key)}

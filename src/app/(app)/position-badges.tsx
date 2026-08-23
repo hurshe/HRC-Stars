@@ -17,7 +17,7 @@ export async function PositionBadges({
   const t = await getTranslations('trainer')
 
   return (
-    <div className="flex flex-wrap justify-end gap-x-1.5 text-[11px] font-medium tracking-wide text-text-muted uppercase">
+    <div className="flex flex-wrap justify-end gap-x-1.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
       {positions.map((position, index) => (
         <span key={position.code}>
           {locale === 'pl' ? position.namePl : position.nameEn}

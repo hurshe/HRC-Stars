@@ -1,85 +1,192 @@
 @import 'tailwindcss';
 
 /*
-  Токены оформления HRC STARS.
+  ═══════════════════════════════════════════════════════════════════════════
+  HRC STARS — дизайн-токены
+  ═══════════════════════════════════════════════════════════════════════════
 
-  Значения сейчас НЕЙТРАЛЬНЫЕ и намеренно скучные — фирменный стиль
-  (чёрный, красный Hard Rock, золото для наград) появится после того,
-  как согласуем визуал. Смысл в том, что менять придётся только этот файл:
-  в компонентах произвольных цветов нет, только семантические токены.
+  Единственное место, где заданы цвета. В компонентах произвольных значений
+  быть не должно — только семантические токены.
+
+  Тёмная тема основная, светлая нужна для планшета на кухне при ярком свете.
+  Имена переменных совместимы с соглашением shadcn/ui, чтобы готовые
+  компоненты Radix подключались без переписывания.
+
+  Контраст всех пар проверяется скриптом: npm run check:contrast
+  Он читает именно этот файл, поэтому расхождения между проверкой
+  и реальностью невозможны.
 */
 
-@theme {
-  /* Поверхности */
-  --color-canvas: oklch(98.5% 0 0);
-  --color-surface: oklch(100% 0 0);
-  --color-surface-muted: oklch(96.5% 0 0);
-  --color-border: oklch(90% 0 0);
-  --color-border-strong: oklch(80% 0 0);
+@custom-variant dark (&:is(.dark *));
 
-  /* Текст */
-  --color-text: oklch(20% 0 0);
-  --color-text-muted: oklch(50% 0 0);
-  --color-text-inverse: oklch(99% 0 0);
+/* ─── Светлая тема ──────────────────────────────────────────────────────── */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 
-  /* Акцент — станет фирменным красным после согласования визуала */
-  --color-accent: oklch(45% 0 0);
-  --color-accent-hover: oklch(35% 0 0);
-  --color-accent-text: oklch(99% 0 0);
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --surface-elevated: #f7f7f7;
 
-  /* Статусы. Используются в матрице обучения и на дашборде */
-  --color-success: oklch(62% 0.15 150);
-  --color-warning: oklch(75% 0.15 85);
-  --color-danger: oklch(58% 0.2 25);
-  --color-info: oklch(60% 0.13 240);
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+
+  --muted: #f4f4f4;
+  --muted-foreground: #525252;
+
+  /* Фирменный красный. На белом фоне он темнее, чем на чёрном:
+     иначе не проходит по контрасту для обычного текста */
+  --primary: #c4161c;
+  --primary-foreground: #ffffff;
+  --primary-hover: #a51117;
+
+  --secondary: #f4f4f4;
+  --secondary-foreground: #171717;
+
+  /* border — декоративные разделители, к нему требований по контрасту нет.
+     border-strong — границы интерактивных элементов, обязан давать 3:1 */
+  --border: #e4e4e4;
+  --border-strong: #8a8a8a;
+  --input: #e4e4e4;
+  --ring: #c4161c;
+
+  /* Статусы. Используются в матрице обучения, бейджах и на дашборде */
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --warning: #a16207;
+  --warning-foreground: #ffffff;
+  --danger: #b91c1c;
+  --danger-foreground: #ffffff;
+  --info: #1d4ed8;
+  --info-foreground: #ffffff;
+
+  /* Золото — только Wild Cards, награды и годовщины */
+  --gold: #8a6d12;
+  --gold-foreground: #ffffff;
 
   --radius-control: 0.5rem;
   --radius-panel: 0.75rem;
 }
 
-/* Тёмная тема: планшет на кухне и телефон в зале часто в тёмном режиме.
-   Обе темы обязаны быть рабочими.
+/* ─── Тёмная тема (основная) ────────────────────────────────────────────── */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
 
-   Переопределяем именно переменные на :root, а не через @theme — директива
-   @theme работает только на верхнем уровне и внутри медиазапроса не сработает. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: oklch(16% 0 0);
-    --color-surface: oklch(21% 0 0);
-    --color-surface-muted: oklch(26% 0 0);
-    --color-border: oklch(32% 0 0);
-    --color-border-strong: oklch(45% 0 0);
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --surface-elevated: #1e1e1e;
 
-    --color-text: oklch(96% 0 0);
-    --color-text-muted: oklch(70% 0 0);
-    --color-text-inverse: oklch(16% 0 0);
+  --popover: #1e1e1e;
+  --popover-foreground: #fafafa;
 
-    --color-accent: oklch(85% 0 0);
-    --color-accent-hover: oklch(95% 0 0);
-    --color-accent-text: oklch(16% 0 0);
+  --muted: #1e1e1e;
+  --muted-foreground: #a3a3a3;
 
-    --color-success: oklch(70% 0.15 150);
-    --color-warning: oklch(80% 0.15 85);
-    --color-danger: oklch(68% 0.19 25);
-    --color-info: oklch(70% 0.12 240);
-  }
+  /* Красный на чёрном даёт около 4:1 — этого хватает для заливок, рамок
+     и крупного текста, но НЕ для обычного текста. Для подписей на тёмном
+     фоне используем foreground, а красный оставляем акцентам */
+  --primary: #e31b23;
+  --primary-foreground: #ffffff;
+  --primary-hover: #f5323a;
+
+  --secondary: #1e1e1e;
+  --secondary-foreground: #fafafa;
+
+  --border: #2a2a2a;
+  --border-strong: #6b6b6b;
+  --input: #2a2a2a;
+  --ring: #e31b23;
+
+  --success: #4ade80;
+  --success-foreground: #052e16;
+  --warning: #fbbf24;
+  --warning-foreground: #422006;
+  --danger: #f87171;
+  --danger-foreground: #450a0a;
+  --info: #60a5fa;
+  --info-foreground: #0a1a33;
+
+  --gold: #e0b93f;
+  --gold-foreground: #241c05;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-surface-elevated: var(--surface-elevated);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-oswald);
 }
 
 @layer base {
   html {
-    /* Полезно для планшета: без этого двойной тап зумит страницу */
+    /* Иначе двойной тап на планшете зумит страницу вместо нажатия */
     touch-action: manipulation;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
-    background-color: var(--color-canvas);
-    color: var(--color-text);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Видимый фокус обязателен: по системе ходят с клавиатуры и со скринридером */
+  /* Заголовки набираются узким плотным шрифтом — это ближе к духу бренда,
+     но читаемость основного текста от этого не страдает */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: 0.01em;
+  }
+
+  /* По системе ходят и с клавиатуры, и со скринридером */
   :focus-visible {
-    outline: 2px solid var(--color-info);
+    outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
   }
 }

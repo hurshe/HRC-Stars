@@ -3,6 +3,8 @@ import { getLocale } from 'next-intl/server'
 import { getPermissions, requireUser } from '@/server/auth/session'
 import type { PermissionCode } from '@/lib/permissions'
 import { LocaleSwitcher } from '@/components/locale-switcher'
+import { ThemeSwitcher } from '@/components/theme-switcher'
+import { Logo } from '@/components/logo'
 import { AppNav, type NavItem } from './app-nav'
 import { SignOutButton } from './sign-out-button'
 import { PositionBadges } from './position-badges'
@@ -33,19 +35,20 @@ export default async function AppLayout({ children }: LayoutProps<'/'>) {
 
   return (
     <div className="min-h-dvh">
-      <header className="border-b border-border bg-surface">
+      <header className="border-b border-border bg-card">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
-          <span className="font-semibold tracking-tight text-text">HRC STARS</span>
+          <Logo />
 
           <div className="ml-auto flex items-center gap-3">
             <div className="text-right leading-tight">
-              <div className="text-sm font-medium text-text">{user.fullName}</div>
+              <div className="text-sm font-medium text-foreground">{user.fullName}</div>
               <PositionBadges
                 positions={user.positions}
                 isTrainer={user.isTrainer}
                 locale={locale}
               />
             </div>
+            <ThemeSwitcher />
             <LocaleSwitcher />
             <SignOutButton />
           </div>

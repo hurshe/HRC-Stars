@@ -41,7 +41,7 @@ export function PinForm() {
       </Button>
 
       <p className="pt-2 text-center">
-        <Link href="/login" className="text-sm text-text-muted underline underline-offset-4 hover:text-text">
+        <Link href="/login" className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">
           {t('passwordLink')}
         </Link>
       </p>

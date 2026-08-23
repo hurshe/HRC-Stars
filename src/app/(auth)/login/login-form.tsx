@@ -51,7 +51,7 @@ export function LoginForm({ from }: { from: string }) {
       </Button>
 
       <p className="pt-2 text-center">
-        <Link href="/pin" className="text-sm text-text-muted underline underline-offset-4 hover:text-text">
+        <Link href="/pin" className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">
           {t('pinLink')}
         </Link>
       </p>
