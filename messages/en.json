@@ -216,7 +216,8 @@
       "invalidRole": "Invalid role",
       "notFound": "Employee not found",
       "alreadyActive": "This account is already active",
-      "formInvalid": "Check the highlighted fields"
+      "formInvalid": "Check the highlighted fields",
+      "cannotEditPeer": "You cannot edit someone at the same or a higher level"
     },
     "profile": {
       "backToList": "All employees",
@@ -231,7 +232,43 @@
       "resendEmail": "Resend email",
       "generateCode": "Generate code",
       "trainerOn": "Add trainer badge",
-      "trainerOff": "Remove trainer badge"
+      "trainerOff": "Remove trainer badge",
+      "edit": "Edit"
+    },
+    "edit": {
+      "title": "Edit employee",
+      "subtitle": "Changes are written to the audit log"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "System configuration",
+    "permissions": {
+      "title": "Roles and permissions",
+      "subtitle": "Change what each role can do without a developer",
+      "open": "Open",
+      "sensitive": "Sensitive data",
+      "locked": "System administrator only",
+      "lockedHint": "This permission cannot be changed from the interface",
+      "readOnlyRole": "You cannot change permissions of a role at your own or a higher level",
+      "sensitiveWarning": "Permissions marked with a lock grant access to personal data. Every change goes to a separate GDPR report.",
+      "saved": "Saved",
+      "groups": {
+        "employees": "Employees",
+        "personal_data": "Personal data",
+        "documents": "Documents",
+        "tests": "Tests",
+        "checklists": "Checklists",
+        "tasks": "Tasks",
+        "wildcards": "Wild Cards",
+        "reports": "Reports",
+        "settings": "Settings and audit"
+      },
+      "errors": {
+        "notFound": "Role or permission not found",
+        "roleTooHigh": "You cannot change permissions of a role at your own or a higher level",
+        "permissionLocked": "This permission is locked for editing"
+      }
     }
   }
 }

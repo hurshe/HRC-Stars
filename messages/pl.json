@@ -216,7 +216,8 @@
       "invalidRole": "Nieprawidłowa rola",
       "notFound": "Nie znaleziono pracownika",
       "alreadyActive": "Konto jest już aktywne",
-      "formInvalid": "Sprawdź zaznaczone pola"
+      "formInvalid": "Sprawdź zaznaczone pola",
+      "cannotEditPeer": "Nie możesz edytować osoby na tym samym lub wyższym poziomie"
     },
     "profile": {
       "backToList": "Wszyscy pracownicy",
@@ -231,7 +232,43 @@
       "resendEmail": "Wyślij ponownie e-mail",
       "generateCode": "Wygeneruj kod",
       "trainerOn": "Nadaj oznaczenie trenera",
-      "trainerOff": "Zdejmij oznaczenie trenera"
+      "trainerOff": "Zdejmij oznaczenie trenera",
+      "edit": "Edytuj"
+    },
+    "edit": {
+      "title": "Edycja pracownika",
+      "subtitle": "Zmiany trafiają do dziennika audytu"
+    }
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "subtitle": "Konfiguracja systemu",
+    "permissions": {
+      "title": "Role i uprawnienia",
+      "subtitle": "Zmieniaj zakres uprawnień ról bez udziału programisty",
+      "open": "Otwórz",
+      "sensitive": "Dane wrażliwe",
+      "locked": "Tylko administrator systemu",
+      "lockedHint": "Tego uprawnienia nie da się zmienić z interfejsu",
+      "readOnlyRole": "Nie możesz zmieniać uprawnień roli na swoim lub wyższym poziomie",
+      "sensitiveWarning": "Uprawnienia oznaczone kłódką dają dostęp do danych osobowych. Każda zmiana trafia do osobnego raportu RODO.",
+      "saved": "Zapisano",
+      "groups": {
+        "employees": "Pracownicy",
+        "personal_data": "Dane osobowe",
+        "documents": "Dokumenty",
+        "tests": "Testy",
+        "checklists": "Listy kontrolne",
+        "tasks": "Zadania",
+        "wildcards": "Wild Cards",
+        "reports": "Raporty",
+        "settings": "Ustawienia i audyt"
+      },
+      "errors": {
+        "notFound": "Nie znaleziono roli lub uprawnienia",
+        "roleTooHigh": "Nie możesz zmieniać uprawnień roli na swoim lub wyższym poziomie",
+        "permissionLocked": "To uprawnienie jest zablokowane do edycji"
+      }
     }
   }
 }

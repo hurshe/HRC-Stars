@@ -2,11 +2,13 @@ import Link from 'next/link'
 import { getLocale, getTranslations } from 'next-intl/server'
 import { ArrowLeft } from 'lucide-react'
 import { db } from '@/lib/db'
-import { requirePermission } from '@/server/auth/session'
-import { EmployeeForm } from './employee-form'
+import { getPermissions, requirePermission } from '@/server/auth/session'
+import { EmployeeForm } from '../employee-form'
+import { createEmployeeAction } from '../actions'
 
 export default async function NewEmployeePage() {
   const actor = await requirePermission('employee.create')
+  const permissions = await getPermissions(actor.id)
   const locale = await getLocale()
   const t = await getTranslations('employees.new')
   const tList = await getTranslations('employees')
@@ -29,7 +31,6 @@ export default async function NewEmployeePage() {
         id: true,
         nameEn: true,
         namePl: true,
-        department: { select: { nameEn: true, namePl: true } },
       },
     }),
   ])
@@ -49,15 +50,12 @@ export default async function NewEmployeePage() {
       </div>
 
       <EmployeeForm
+        mode="create"
+        action={createEmployeeAction}
         roles={roles}
-        positions={positions.map((position) => ({
-          id: position.id,
-          nameEn: position.nameEn,
-          namePl: position.namePl,
-          departmentEn: position.department.nameEn,
-          departmentPl: position.department.namePl,
-        }))}
+        positions={positions}
         locale={locale}
+        canEditPersonal={permissions.has('personal_data.edit')}
       />
     </div>
   )

@@ -1,7 +1,12 @@
 import type { Prisma, UserStatus } from '@prisma/client'
 import { db } from '@/lib/db'
 import { decryptOptional, encryptOptional } from '@/lib/crypto'
-import type { CreateEmployeeInput, EmployeeFilters, InviteMethod } from '@/lib/employee-schema'
+import type {
+  CreateEmployeeInput,
+  EmployeeFilters,
+  InviteMethod,
+  UpdateEmployeeInput,
+} from '@/lib/employee-schema'
 import { getPermissions, outranks, type CurrentUser } from '@/server/auth/session'
 import { writeAudit } from './audit'
 import { createActivationCode, createInvitationLink } from './invitations'
@@ -288,6 +293,150 @@ async function issueInvite(actorId: string, userId: string, method: InviteMethod
     return { activationCode: invitation.code }
   }
   return {}
+}
+
+export type UpdateEmployeeResult =
+  | { ok: true }
+  | {
+      ok: false
+      error: 'notFound' | 'roleTooHigh' | 'employeeNumberTaken' | 'invalidRole' | 'cannotEditPeer'
+    }
+
+/// Обновление карточки. Персональные данные пишутся только при наличии
+/// отдельного права: менеджер без него может поправить позицию и статус,
+/// но не тронет адрес и номер документа.
+export async function updateEmployee(
+  actor: CurrentUser,
+  input: UpdateEmployeeInput,
+): Promise<UpdateEmployeeResult> {
+  const target = await db.user.findFirst({
+    where: { id: input.userId, locationId: actor.locationId, deletedAt: null },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      employeeNumber: true,
+      status: true,
+      hiredAt: true,
+      roleId: true,
+      role: { select: { level: true, code: true } },
+      positions: { where: { endedAt: null }, select: { positionId: true, isPrimary: true } },
+    },
+  })
+  if (!target) return { ok: false, error: 'notFound' }
+
+  // Редактировать можно только тех, кто ниже по иерархии. Себя — тоже нет:
+  // иначе можно поднять себе роль, что и есть основной сценарий злоупотребления
+  if (!outranks(actor, target.role.level)) return { ok: false, error: 'cannotEditPeer' }
+
+  const role = await db.role.findUnique({
+    where: { id: input.roleId },
+    select: { id: true, level: true, code: true },
+  })
+  if (!role) return { ok: false, error: 'invalidRole' }
+  if (!outranks(actor, role.level)) return { ok: false, error: 'roleTooHigh' }
+
+  if (input.employeeNumber && input.employeeNumber !== target.employeeNumber) {
+    const taken = await db.user.findUnique({ where: { employeeNumber: input.employeeNumber } })
+    if (taken) return { ok: false, error: 'employeeNumberTaken' }
+  }
+
+  const permissions = await getPermissions(actor.id)
+  const canEditPersonal = permissions.has('personal_data.edit')
+
+  const primaryPositionId = input.primaryPositionId ?? input.positionIds[0]
+  const currentPositionIds = target.positions.map((p) => p.positionId)
+  const removed = currentPositionIds.filter((id) => !input.positionIds.includes(id))
+  const added = input.positionIds.filter((id) => !currentPositionIds.includes(id))
+
+  await db.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: target.id },
+      data: {
+        firstName: input.firstName,
+        lastName: input.lastName,
+        employeeNumber: input.employeeNumber ?? target.employeeNumber,
+        locale: input.locale,
+        status: input.status,
+        roleId: role.id,
+        hiredAt: input.hiredAt ? new Date(input.hiredAt) : null,
+      },
+    })
+
+    // Снятую позицию не удаляем, а закрываем датой: история того, кем человек
+    // работал, нужна для отчётов и для уже пройденных им тестов
+    if (removed.length > 0) {
+      await tx.employeePosition.updateMany({
+        where: { userId: target.id, positionId: { in: removed }, endedAt: null },
+        data: { endedAt: new Date() },
+      })
+    }
+
+    for (const positionId of added) {
+      await tx.employeePosition.upsert({
+        where: { userId_positionId: { userId: target.id, positionId } },
+        update: { endedAt: null, isPrimary: positionId === primaryPositionId },
+        create: { userId: target.id, positionId, isPrimary: positionId === primaryPositionId },
+      })
+    }
+
+    await tx.employeePosition.updateMany({
+      where: { userId: target.id, endedAt: null },
+      data: { isPrimary: false },
+    })
+    await tx.employeePosition.updateMany({
+      where: { userId: target.id, positionId: primaryPositionId, endedAt: null },
+      data: { isPrimary: true },
+    })
+
+    if (canEditPersonal) {
+      const personal = {
+        phoneEnc: encryptOptional(input.phone),
+        dateOfBirthEnc: encryptOptional(input.dateOfBirth),
+        addressEnc: encryptOptional(input.address),
+        personalIdEnc: encryptOptional(input.personalId),
+        emergencyContactNameEnc: encryptOptional(input.emergencyContactName),
+        emergencyContactPhoneEnc: encryptOptional(input.emergencyContactPhone),
+        notesEnc: encryptOptional(input.notes),
+        gender: input.gender ?? null,
+        employmentType: input.employmentType ?? null,
+      }
+      await tx.employeeProfile.upsert({
+        where: { userId: target.id },
+        update: personal,
+        create: { userId: target.id, ...personal },
+      })
+    }
+  })
+
+  // В аудит попадают только несекретные поля: сам журнал не должен становиться
+  // копией персональных данных в открытом виде
+  await writeAudit({
+    actorId: actor.id,
+    action: 'employee.updated',
+    entityType: 'User',
+    entityId: target.id,
+    locationId: actor.locationId,
+    before: {
+      firstName: target.firstName,
+      lastName: target.lastName,
+      status: target.status,
+      role: target.role.code,
+      employeeNumber: target.employeeNumber,
+      positions: currentPositionIds.length,
+    },
+    after: {
+      firstName: input.firstName,
+      lastName: input.lastName,
+      status: input.status,
+      role: role.code,
+      employeeNumber: input.employeeNumber ?? target.employeeNumber,
+      positions: input.positionIds.length,
+      personalDataTouched: canEditPersonal,
+    },
+  })
+
+  return { ok: true }
 }
 
 /// Повторная отправка приглашения из карточки сотрудника

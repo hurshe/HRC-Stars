@@ -51,6 +51,25 @@ export const createEmployeeSchema = z.object({
 
 export type CreateEmployeeInput = z.infer<typeof createEmployeeSchema>
 
+export const employeeStatuses = [
+  'INVITED',
+  'ACTIVE',
+  'ON_LEAVE',
+  'SUSPENDED',
+  'ARCHIVED',
+] as const
+
+/// Редактирование не трогает email и способ приглашения: смена адреса —
+/// это отдельная операция со своей проверкой, а приглашение уже выдано
+export const updateEmployeeSchema = createEmployeeSchema
+  .omit({ email: true, inviteMethod: true })
+  .extend({
+    userId: z.string().min(1),
+    status: withDefault(employeeStatuses, 'ACTIVE'),
+  })
+
+export type UpdateEmployeeInput = z.infer<typeof updateEmployeeSchema>
+
 export const employeeFiltersSchema = z.object({
   search: z.string().trim().max(120).optional(),
   positionId: z.string().optional(),

@@ -1,11 +1,17 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createEmployeeSchema } from '@/lib/employee-schema'
+import { redirect } from 'next/navigation'
+import { createEmployeeSchema, updateEmployeeSchema } from '@/lib/employee-schema'
 import { requirePermission } from '@/server/auth/session'
-import { createEmployee, resendInvitation, setTrainerFlag } from '@/server/services/employees'
+import {
+  createEmployee,
+  resendInvitation,
+  setTrainerFlag,
+  updateEmployee,
+} from '@/server/services/employees'
 
-export type CreateEmployeeState = {
+export type EmployeeFormState = {
   error?: string
   fieldErrors?: Record<string, string>
   created?: {
@@ -17,10 +23,21 @@ export type CreateEmployeeState = {
   }
 }
 
+/// Ошибки zod раскладываются по полям формы: сообщение — это код,
+/// который интерфейс переводит сам
+function collectFieldErrors(issues: { path: PropertyKey[]; message: string }[]) {
+  const fieldErrors: Record<string, string> = {}
+  for (const issue of issues) {
+    const field = String(issue.path[0] ?? 'form')
+    fieldErrors[field] ??= issue.message
+  }
+  return fieldErrors
+}
+
 export async function createEmployeeAction(
-  _prev: CreateEmployeeState,
+  _prev: EmployeeFormState,
   formData: FormData,
-): Promise<CreateEmployeeState> {
+): Promise<EmployeeFormState> {
   const actor = await requirePermission('employee.create')
 
   const raw = Object.fromEntries(formData)
@@ -30,14 +47,7 @@ export async function createEmployeeAction(
     positionIds: formData.getAll('positionIds').filter(Boolean),
   })
 
-  if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {}
-    for (const issue of parsed.error.issues) {
-      const field = String(issue.path[0] ?? 'form')
-      fieldErrors[field] ??= issue.message
-    }
-    return { fieldErrors }
-  }
+  if (!parsed.success) return { fieldErrors: collectFieldErrors(parsed.error.issues) }
 
   const result = await createEmployee(actor, parsed.data)
   if (!result.ok) return { error: result.error }
@@ -53,6 +63,26 @@ export async function createEmployeeAction(
       emailSent: result.emailSent,
     },
   }
+}
+
+export async function updateEmployeeAction(
+  _prev: EmployeeFormState,
+  formData: FormData,
+): Promise<EmployeeFormState> {
+  const actor = await requirePermission('employee.edit')
+
+  const parsed = updateEmployeeSchema.safeParse({
+    ...Object.fromEntries(formData),
+    positionIds: formData.getAll('positionIds').filter(Boolean),
+  })
+  if (!parsed.success) return { fieldErrors: collectFieldErrors(parsed.error.issues) }
+
+  const result = await updateEmployee(actor, parsed.data)
+  if (!result.ok) return { error: result.error }
+
+  revalidatePath('/employees')
+  revalidatePath(`/employees/${parsed.data.userId}`)
+  redirect(`/employees/${parsed.data.userId}`)
 }
 
 export type InviteState = {

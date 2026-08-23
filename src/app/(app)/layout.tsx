@@ -18,7 +18,7 @@ const NAV: (ShellNavItem & { permission?: PermissionCode })[] = [
   { key: 'tasks', href: '/tasks', permission: 'task.view', planned: true },
   { key: 'wildcards', href: '/wildcards', planned: true },
   { key: 'reports', href: '/reports', permission: 'report.view', planned: true },
-  { key: 'settings', href: '/settings', permission: 'settings.view', planned: true },
+  { key: 'settings', href: '/settings', permission: 'settings.view' },
   { key: 'designSystem', href: '/design-system', permission: 'settings.view' },
 ]
 

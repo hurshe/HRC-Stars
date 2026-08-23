@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
-import { ArrowLeft, Lock } from 'lucide-react'
-import { getPermissions, requirePermission } from '@/server/auth/session'
+import { ArrowLeft, Lock, Pencil } from 'lucide-react'
+import { getPermissions, outranks, requirePermission } from '@/server/auth/session'
 import { getEmployee, readPersonalData } from '@/server/services/employees'
 import { Badge, toneForStatus } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { InviteActions, TrainerToggle } from './employee-actions'
 
@@ -75,6 +76,16 @@ export default async function EmployeeProfilePage({ params }: PageProps<'/employ
             <Badge tone={toneForStatus(employee.status)} size="md">
               {t(`status.${employee.status}`)}
             </Badge>
+            {/* Кнопку показываем только если редактирование реально доступно:
+                права есть и человек ниже по иерархии */}
+            {permissions.has('employee.edit') && outranks(actor, employee.role.level) && (
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/employees/${employee.id}/edit`}>
+                  <Pencil className="size-4" aria-hidden />
+                  {t('profile.edit')}
+                </Link>
+              </Button>
+            )}
             <TrainerToggle
               userId={employee.id}
               isTrainer={employee.isTrainer}

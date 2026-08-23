@@ -14,7 +14,8 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
-    "check:contrast": "tsx scripts/check-contrast.ts"
+    "check:contrast": "tsx scripts/check-contrast.ts",
+    "check:guards": "tsx scripts/check-permission-guards.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
