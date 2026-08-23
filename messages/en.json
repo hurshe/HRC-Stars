@@ -1,0 +1,118 @@
+{
+  "common": {
+    "appName": "HRC STARS",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading…",
+    "signOut": "Sign out",
+    "language": "Language",
+    "locale": {
+      "pl": "Polski",
+      "en": "English"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in",
+      "subtitle": "Hard Rock Cafe documents and training system",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "pinLink": "Sign in with PIN"
+    },
+    "pin": {
+      "title": "PIN sign in",
+      "subtitle": "Quick access to checklists on the floor tablet",
+      "label": "PIN code",
+      "submit": "Enter",
+      "passwordLink": "Sign in with password"
+    },
+    "activate": {
+      "title": "Set your password",
+      "subtitle": "Create a password for your HRC STARS account",
+      "password": "New password",
+      "passwordConfirm": "Repeat password",
+      "submit": "Save and sign in",
+      "submitting": "Saving…",
+      "success": "Password has been set"
+    },
+    "changePassword": {
+      "title": "Change password",
+      "subtitle": "You need to set your own password on first sign in",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Repeat new password",
+      "submit": "Change password"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "invalidPin": "Invalid PIN code",
+      "accountInactive": "This account is inactive. Contact your manager",
+      "accountArchived": "This account has been closed",
+      "accountLocked": "Account locked after too many attempts. Try again in {minutes} min",
+      "notActivated": "This account is not activated yet. Check your invitation email",
+      "guestExpired": "Guest access has expired",
+      "invitationInvalid": "This link is not valid",
+      "invitationExpired": "The invitation has expired. Ask your manager for a new one",
+      "invitationUsed": "This invitation has already been used",
+      "unknown": "Something went wrong. Please try again"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "passwordTooShort": "Password must be at least {min} characters",
+    "passwordTooWeak": "Password must contain an uppercase letter, a lowercase letter and a digit",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "pinLength": "PIN must be {length} digits"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "documents": "Documents",
+    "training": "Training",
+    "checklists": "Checklists",
+    "tasks": "Tasks",
+    "wildcards": "Wild Cards",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Hi, {name}",
+    "yourRole": "Your role",
+    "yourLocation": "Location",
+    "placeholder": "Modules will appear here in the next phases."
+  },
+  "errors": {
+    "forbidden": {
+      "title": "No access",
+      "description": "You do not have permission for this section. If this is a mistake, ask your manager to grant it."
+    },
+    "notFound": {
+      "title": "Not found",
+      "description": "This page does not exist."
+    },
+    "generic": {
+      "title": "Something went wrong",
+      "description": "Please try again. If the error keeps happening, report it to the administrator.",
+      "retry": "Try again"
+    }
+  },
+  "trainer": {
+    "badge": "TRAINER"
+  },
+  "email": {
+    "invitation": {
+      "subject": "Your invitation to HRC STARS",
+      "greeting": "Hi {name},",
+      "body": "Your manager created an account for you in HRC STARS — documents, training and checklists live here.",
+      "instruction": "Click the button below and set your password.",
+      "cta": "Set password",
+      "expires": "This link is valid until {date}.",
+      "fallback": "If the button does not work, copy this address into your browser:",
+      "ignore": "If you were not expecting this message, simply ignore it — without setting a password the account stays inactive."
+    }
+  }
+}

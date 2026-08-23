@@ -1,0 +1,118 @@
+{
+  "common": {
+    "appName": "HRC STARS",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "loading": "Ładowanie…",
+    "signOut": "Wyloguj się",
+    "language": "Język",
+    "locale": {
+      "pl": "Polski",
+      "en": "English"
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Zaloguj się",
+      "subtitle": "System dokumentów i szkoleń Hard Rock Cafe",
+      "email": "Adres e-mail",
+      "password": "Hasło",
+      "submit": "Zaloguj się",
+      "submitting": "Logowanie…",
+      "pinLink": "Wejście kodem PIN"
+    },
+    "pin": {
+      "title": "Wejście kodem PIN",
+      "subtitle": "Szybki dostęp do list kontrolnych na tablecie",
+      "label": "Kod PIN",
+      "submit": "Wejdź",
+      "passwordLink": "Zaloguj się hasłem"
+    },
+    "activate": {
+      "title": "Ustaw hasło",
+      "subtitle": "Utwórz hasło do swojego konta w HRC STARS",
+      "password": "Nowe hasło",
+      "passwordConfirm": "Powtórz hasło",
+      "submit": "Zapisz i zaloguj",
+      "submitting": "Zapisywanie…",
+      "success": "Hasło zostało ustawione"
+    },
+    "changePassword": {
+      "title": "Zmień hasło",
+      "subtitle": "Przy pierwszym logowaniu trzeba ustawić własne hasło",
+      "current": "Obecne hasło",
+      "new": "Nowe hasło",
+      "confirm": "Powtórz nowe hasło",
+      "submit": "Zmień hasło"
+    },
+    "errors": {
+      "invalidCredentials": "Nieprawidłowy e-mail lub hasło",
+      "invalidPin": "Nieprawidłowy kod PIN",
+      "accountInactive": "Konto jest nieaktywne. Skontaktuj się z menedżerem",
+      "accountArchived": "Konto zostało zamknięte",
+      "accountLocked": "Konto zablokowane po zbyt wielu próbach. Spróbuj ponownie za {minutes} min",
+      "notActivated": "Konto nie zostało jeszcze aktywowane. Sprawdź zaproszenie w poczcie",
+      "guestExpired": "Dostęp gościa wygasł",
+      "invitationInvalid": "Link jest nieprawidłowy",
+      "invitationExpired": "Zaproszenie wygasło. Poproś menedżera o nowe",
+      "invitationUsed": "To zaproszenie zostało już wykorzystane",
+      "unknown": "Coś poszło nie tak. Spróbuj ponownie"
+    }
+  },
+  "validation": {
+    "required": "Pole wymagane",
+    "email": "Nieprawidłowy adres e-mail",
+    "passwordTooShort": "Hasło musi mieć co najmniej {min} znaków",
+    "passwordTooWeak": "Hasło musi zawierać wielką literę, małą literę i cyfrę",
+    "passwordsDoNotMatch": "Hasła nie są identyczne",
+    "pinLength": "Kod PIN musi mieć {length} cyfr"
+  },
+  "nav": {
+    "dashboard": "Pulpit",
+    "employees": "Pracownicy",
+    "documents": "Dokumenty",
+    "training": "Szkolenia",
+    "checklists": "Listy kontrolne",
+    "tasks": "Zadania",
+    "wildcards": "Wild Cards",
+    "reports": "Raporty",
+    "settings": "Ustawienia"
+  },
+  "dashboard": {
+    "title": "Pulpit",
+    "welcome": "Cześć, {name}",
+    "yourRole": "Twoja rola",
+    "yourLocation": "Lokalizacja",
+    "placeholder": "Moduły pojawią się tutaj w kolejnych etapach."
+  },
+  "errors": {
+    "forbidden": {
+      "title": "Brak dostępu",
+      "description": "Nie masz uprawnień do tej sekcji. Jeśli to pomyłka, poproś menedżera o nadanie uprawnień."
+    },
+    "notFound": {
+      "title": "Nie znaleziono",
+      "description": "Taka strona nie istnieje."
+    },
+    "generic": {
+      "title": "Wystąpił błąd",
+      "description": "Spróbuj ponownie. Jeśli błąd się powtarza, zgłoś go administratorowi.",
+      "retry": "Spróbuj ponownie"
+    }
+  },
+  "trainer": {
+    "badge": "TRAINER"
+  },
+  "email": {
+    "invitation": {
+      "subject": "Zaproszenie do systemu HRC STARS",
+      "greeting": "Cześć {name},",
+      "body": "Menedżer utworzył dla Ciebie konto w systemie HRC STARS — tu znajdziesz dokumenty, szkolenia i listy kontrolne.",
+      "instruction": "Kliknij przycisk poniżej i ustaw swoje hasło.",
+      "cta": "Ustaw hasło",
+      "expires": "Link jest ważny do {date}.",
+      "fallback": "Jeśli przycisk nie działa, skopiuj ten adres do przeglądarki:",
+      "ignore": "Jeśli nie spodziewasz się tej wiadomości, po prostu ją zignoruj — bez ustawienia hasła konto pozostanie nieaktywne."
+    }
+  }
+}

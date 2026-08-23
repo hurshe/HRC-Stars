@@ -5,6 +5,7 @@ import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { hash } from 'bcryptjs'
+import { PERMISSIONS, ROLES, DEFAULT_ROLE_PERMISSIONS } from '../src/lib/permissions'
 
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
@@ -44,140 +45,6 @@ const POSITIONS = [
   { code: 'RECEIVING', nameEn: 'Receiving', namePl: 'Magazynier', department: 'RECEIVING', sortOrder: 10 },
 ] as const
 
-// ─── Роли ─────────────────────────────────────────────────────────────────────
-
-const ROLES = [
-  { code: 'SUPER_ADMIN', nameEn: 'System Administrator', namePl: 'Administrator systemu', level: 100 },
-  { code: 'GM', nameEn: 'General Manager', namePl: 'Dyrektor generalny', level: 90 },
-  { code: 'AGM', nameEn: 'Assistant General Manager', namePl: 'Zastępca dyrektora', level: 80 },
-  { code: 'MANAGER', nameEn: 'Manager', namePl: 'Menedżer', level: 70 },
-  { code: 'SUPERVISOR', nameEn: 'Supervisor', namePl: 'Kierownik zmiany', level: 60 },
-  { code: 'MIT', nameEn: 'Manager in Training', namePl: 'Manager in Training', level: 40 },
-  { code: 'STAFF', nameEn: 'Staff', namePl: 'Pracownik', level: 10 },
-] as const
-
-// ─── Права ────────────────────────────────────────────────────────────────────
-//
-// Важно: все коды описывают действия НАД ДРУГИМИ людьми и общими данными.
-// Доступ к собственному профилю, своим тестам, своим чек-листам и своему балансу
-// Wild Card правами не регулируется — он есть у любого активного сотрудника всегда.
-//
-// isSensitive — GDPR-чувствительное право: включение показывает предупреждение
-//               и попадает в отдельный отчёт.
-// isEditable=false — право уровня SUPER_ADMIN, из интерфейса не редактируется вообще.
-
-type PermissionSeed = {
-  code: string
-  group: string
-  nameEn: string
-  namePl: string
-  isSensitive?: boolean
-  isEditable?: boolean
-}
-
-const PERMISSIONS: PermissionSeed[] = [
-  // Сотрудники
-  { code: 'employee.view', group: 'employees', nameEn: 'View employees', namePl: 'Podgląd pracowników' },
-  { code: 'employee.create', group: 'employees', nameEn: 'Create employees', namePl: 'Tworzenie pracowników' },
-  { code: 'employee.edit', group: 'employees', nameEn: 'Edit employees', namePl: 'Edycja pracowników' },
-  { code: 'employee.archive', group: 'employees', nameEn: 'Archive employees', namePl: 'Archiwizacja pracowników' },
-  { code: 'employee.invite', group: 'employees', nameEn: 'Send invitations', namePl: 'Wysyłanie zaproszeń' },
-  { code: 'employee.position.manage', group: 'employees', nameEn: 'Manage positions', namePl: 'Zarządzanie stanowiskami' },
-  { code: 'employee.trainer.manage', group: 'employees', nameEn: 'Assign trainer badge', namePl: 'Nadawanie oznaczenia trenera' },
-
-  // Персональные данные (GDPR)
-  { code: 'personal_data.view', group: 'personal_data', nameEn: 'View personal data', namePl: 'Podgląd danych osobowych', isSensitive: true },
-  { code: 'personal_data.edit', group: 'personal_data', nameEn: 'Edit personal data', namePl: 'Edycja danych osobowych', isSensitive: true },
-  { code: 'personal_data.export', group: 'personal_data', nameEn: 'Export personal data', namePl: 'Eksport danych osobowych', isSensitive: true },
-  { code: 'personal_data.erase', group: 'personal_data', nameEn: 'Erase personal data (GDPR)', namePl: 'Usunięcie danych osobowych (RODO)', isSensitive: true, isEditable: false },
-
-  // Документы
-  { code: 'document.view', group: 'documents', nameEn: 'View documents', namePl: 'Podgląd dokumentów' },
-  { code: 'document.create', group: 'documents', nameEn: 'Create documents', namePl: 'Tworzenie dokumentów' },
-  { code: 'document.edit', group: 'documents', nameEn: 'Edit documents', namePl: 'Edycja dokumentów' },
-  { code: 'document.delete', group: 'documents', nameEn: 'Delete documents', namePl: 'Usuwanie dokumentów' },
-  { code: 'document.assign', group: 'documents', nameEn: 'Assign documents', namePl: 'Przypisywanie dokumentów' },
-  { code: 'document.requirement.manage', group: 'documents', nameEn: 'Manage required documents', namePl: 'Zarządzanie wymaganymi dokumentami' },
-
-  // Тесты
-  { code: 'test.view', group: 'tests', nameEn: 'View tests', namePl: 'Podgląd testów' },
-  { code: 'test.create', group: 'tests', nameEn: 'Create tests', namePl: 'Tworzenie testów' },
-  { code: 'test.edit', group: 'tests', nameEn: 'Edit tests', namePl: 'Edycja testów' },
-  { code: 'test.delete', group: 'tests', nameEn: 'Delete tests', namePl: 'Usuwanie testów' },
-  { code: 'test.assign', group: 'tests', nameEn: 'Assign tests', namePl: 'Przypisywanie testów' },
-  { code: 'test.result.view', group: 'tests', nameEn: 'View results of others', namePl: 'Podgląd wyników innych' },
-  { code: 'test.result.enter', group: 'tests', nameEn: 'Enter paper results', namePl: 'Wprowadzanie wyników papierowych' },
-  { code: 'test.threshold.manage', group: 'tests', nameEn: 'Manage pass thresholds', namePl: 'Zarządzanie progami zaliczenia' },
-
-  // Чек-листы
-  { code: 'checklist.view', group: 'checklists', nameEn: 'View checklists', namePl: 'Podgląd list kontrolnych' },
-  { code: 'checklist.template.manage', group: 'checklists', nameEn: 'Manage templates', namePl: 'Zarządzanie szablonami' },
-  { code: 'checklist.run', group: 'checklists', nameEn: 'Complete checklists', namePl: 'Wypełnianie list kontrolnych' },
-  { code: 'checklist.verify', group: 'checklists', nameEn: 'Verify checklists', namePl: 'Weryfikacja list kontrolnych' },
-
-  // Задачи
-  { code: 'task.view', group: 'tasks', nameEn: 'View tasks', namePl: 'Podgląd zadań' },
-  { code: 'task.create', group: 'tasks', nameEn: 'Create tasks', namePl: 'Tworzenie zadań' },
-  { code: 'task.assign', group: 'tasks', nameEn: 'Assign tasks', namePl: 'Przydzielanie zadań' },
-  { code: 'task.verify', group: 'tasks', nameEn: 'Accept completed tasks', namePl: 'Akceptacja wykonanych zadań' },
-
-  // Wild Cards
-  { code: 'wildcard.grant', group: 'wildcards', nameEn: 'Grant Wild Cards', namePl: 'Przyznawanie Wild Card' },
-  { code: 'wildcard.balance.view', group: 'wildcards', nameEn: 'View balances of others', namePl: 'Podgląd sald innych' },
-  { code: 'wildcard.voucher.manage', group: 'wildcards', nameEn: 'Manage voucher catalogue', namePl: 'Zarządzanie katalogiem voucherów' },
-  { code: 'wildcard.request.approve', group: 'wildcards', nameEn: 'Approve voucher requests', namePl: 'Zatwierdzanie wniosków o voucher' },
-  { code: 'wildcard.report.view', group: 'wildcards', nameEn: 'View granting report', namePl: 'Raport przyznanych Wild Card' },
-
-  // Отчёты
-  { code: 'report.view', group: 'reports', nameEn: 'View reports', namePl: 'Podgląd raportów' },
-  { code: 'report.export', group: 'reports', nameEn: 'Export reports', namePl: 'Eksport raportów' },
-
-  // Настройки и аудит
-  { code: 'settings.view', group: 'settings', nameEn: 'View settings', namePl: 'Podgląd ustawień' },
-  { code: 'settings.edit', group: 'settings', nameEn: 'Edit settings', namePl: 'Edycja ustawień' },
-  { code: 'settings.permissions.manage', group: 'settings', nameEn: 'Manage role permissions', namePl: 'Zarządzanie uprawnieniami ról' },
-  { code: 'settings.location.manage', group: 'settings', nameEn: 'Manage locations', namePl: 'Zarządzanie lokalizacjami', isEditable: false },
-  { code: 'settings.role.manage', group: 'settings', nameEn: 'Manage roles', namePl: 'Zarządzanie rolami', isEditable: false },
-  { code: 'audit.view', group: 'settings', nameEn: 'View audit log', namePl: 'Podgląd dziennika audytu' },
-  { code: 'audit.gdpr.view', group: 'settings', nameEn: 'View GDPR report', namePl: 'Podgląd raportu RODO', isSensitive: true },
-]
-
-// ─── Наборы прав по ролям ─────────────────────────────────────────────────────
-//
-// SUPERVISOR намеренно совпадает с MANAGER один в один: по требованию заказчика
-// супервайзер умеет всё то же самое, отличие только в уровне иерархии.
-
-const ALL = PERMISSIONS.map((p) => p.code)
-const SUPER_ADMIN_ONLY = PERMISSIONS.filter((p) => p.isEditable === false).map((p) => p.code)
-
-const MANAGER_PERMISSIONS = [
-  'employee.view', 'employee.create', 'employee.edit', 'employee.archive',
-  'employee.invite', 'employee.position.manage', 'employee.trainer.manage',
-  'personal_data.view', 'personal_data.edit', 'personal_data.export',
-  'document.view', 'document.create', 'document.edit', 'document.delete',
-  'document.assign', 'document.requirement.manage',
-  'test.view', 'test.create', 'test.edit', 'test.delete', 'test.assign',
-  'test.result.view', 'test.result.enter', 'test.threshold.manage',
-  'checklist.view', 'checklist.template.manage', 'checklist.run', 'checklist.verify',
-  'task.view', 'task.create', 'task.assign', 'task.verify',
-  'wildcard.grant', 'wildcard.balance.view', 'wildcard.voucher.manage',
-  'wildcard.request.approve',
-  'report.view', 'report.export',
-  'settings.view', 'audit.view',
-]
-
-const ROLE_PERMISSIONS: Record<string, string[]> = {
-  SUPER_ADMIN: ALL,
-  // GM и AGM получают всё, кроме прав уровня администратора системы
-  GM: ALL.filter((c) => !SUPER_ADMIN_ONLY.includes(c)),
-  AGM: ALL.filter((c) => !SUPER_ADMIN_ONLY.includes(c)),
-  MANAGER: MANAGER_PERMISSIONS,
-  SUPERVISOR: MANAGER_PERMISSIONS,
-  // Гость на обучении: только материалы и свои тесты
-  MIT: ['document.view', 'test.view'],
-  STAFF: ['document.view', 'checklist.run', 'task.view'],
-}
-
 // ─── Настройки по умолчанию ───────────────────────────────────────────────────
 
 const SETTINGS: { key: string; value: unknown }[] = [
@@ -202,7 +69,6 @@ const SETTINGS: { key: string; value: unknown }[] = [
 async function main() {
   console.log('Сид HRC STARS\n')
 
-  // Департаменты
   for (const d of DEPARTMENTS) {
     await db.department.upsert({
       where: { code: d.code },
@@ -212,22 +78,19 @@ async function main() {
   }
   console.log(`  департаменты: ${DEPARTMENTS.length}`)
 
-  // Позиции
-  const departmentsByCode = new Map(
-    (await db.department.findMany()).map((d) => [d.code, d.id]),
-  )
+  const departmentsByCode = new Map((await db.department.findMany()).map((d) => [d.code, d.id]))
   for (const p of POSITIONS) {
     const departmentId = departmentsByCode.get(p.department)
     if (!departmentId) throw new Error(`Департамент ${p.department} не найден`)
+    const data = { nameEn: p.nameEn, namePl: p.namePl, departmentId, sortOrder: p.sortOrder }
     await db.position.upsert({
       where: { code: p.code },
-      update: { nameEn: p.nameEn, namePl: p.namePl, departmentId, sortOrder: p.sortOrder },
-      create: { code: p.code, nameEn: p.nameEn, namePl: p.namePl, departmentId, sortOrder: p.sortOrder },
+      update: data,
+      create: { code: p.code, ...data },
     })
   }
   console.log(`  позиции: ${POSITIONS.length}`)
 
-  // Роли
   for (const r of ROLES) {
     await db.role.upsert({
       where: { code: r.code },
@@ -237,39 +100,30 @@ async function main() {
   }
   console.log(`  роли: ${ROLES.length}`)
 
-  // Права
   for (const [index, p] of PERMISSIONS.entries()) {
+    const data = {
+      group: p.group,
+      nameEn: p.nameEn,
+      namePl: p.namePl,
+      isSensitive: 'isSensitive' in p ? p.isSensitive : false,
+      isEditable: 'isEditable' in p ? p.isEditable : true,
+      sortOrder: index,
+    }
     await db.permission.upsert({
       where: { code: p.code },
-      update: {
-        group: p.group,
-        nameEn: p.nameEn,
-        namePl: p.namePl,
-        isSensitive: p.isSensitive ?? false,
-        isEditable: p.isEditable ?? true,
-        sortOrder: index,
-      },
-      create: {
-        code: p.code,
-        group: p.group,
-        nameEn: p.nameEn,
-        namePl: p.namePl,
-        isSensitive: p.isSensitive ?? false,
-        isEditable: p.isEditable ?? true,
-        sortOrder: index,
-      },
+      update: data,
+      create: { code: p.code, ...data },
     })
   }
   console.log(`  права: ${PERMISSIONS.length}`)
 
-  // Наборы прав по ролям.
   // Существующие связи не трогаем: если GM уже поменял права в интерфейсе,
   // повторный сид не должен откатывать его настройку.
   const rolesByCode = new Map((await db.role.findMany()).map((r) => [r.code, r.id]))
   const permissionsByCode = new Map((await db.permission.findMany()).map((p) => [p.code, p.id]))
 
   let created = 0
-  for (const [roleCode, codes] of Object.entries(ROLE_PERMISSIONS)) {
+  for (const [roleCode, codes] of Object.entries(DEFAULT_ROLE_PERMISSIONS)) {
     const roleId = rolesByCode.get(roleCode)
     if (!roleId) throw new Error(`Роль ${roleCode} не найдена`)
     for (const code of codes) {
@@ -299,7 +153,7 @@ async function main() {
   })
   console.log(`  локация: ${location.name} (${location.code})`)
 
-  // Настройки по умолчанию. Уже изменённые значения не перезаписываем.
+  // Уже изменённые значения настроек не перезаписываем
   for (const s of SETTINGS) {
     await db.setting.upsert({
       where: { scope_key: { scope: 'GLOBAL', key: s.key } },
@@ -309,7 +163,6 @@ async function main() {
   }
   console.log(`  настройки: ${SETTINGS.length}`)
 
-  // Первый администратор
   const adminEmail = process.env.SEED_ADMIN_EMAIL
   const adminPassword = process.env.SEED_ADMIN_PASSWORD
   if (!adminEmail || !adminPassword) {

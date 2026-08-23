@@ -1,26 +1,85 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Токены оформления HRC STARS.
+
+  Значения сейчас НЕЙТРАЛЬНЫЕ и намеренно скучные — фирменный стиль
+  (чёрный, красный Hard Rock, золото для наград) появится после того,
+  как согласуем визуал. Смысл в том, что менять придётся только этот файл:
+  в компонентах произвольных цветов нет, только семантические токены.
+*/
+
+@theme {
+  /* Поверхности */
+  --color-canvas: oklch(98.5% 0 0);
+  --color-surface: oklch(100% 0 0);
+  --color-surface-muted: oklch(96.5% 0 0);
+  --color-border: oklch(90% 0 0);
+  --color-border-strong: oklch(80% 0 0);
+
+  /* Текст */
+  --color-text: oklch(20% 0 0);
+  --color-text-muted: oklch(50% 0 0);
+  --color-text-inverse: oklch(99% 0 0);
+
+  /* Акцент — станет фирменным красным после согласования визуала */
+  --color-accent: oklch(45% 0 0);
+  --color-accent-hover: oklch(35% 0 0);
+  --color-accent-text: oklch(99% 0 0);
+
+  /* Статусы. Используются в матрице обучения и на дашборде */
+  --color-success: oklch(62% 0.15 150);
+  --color-warning: oklch(75% 0.15 85);
+  --color-danger: oklch(58% 0.2 25);
+  --color-info: oklch(60% 0.13 240);
+
+  --radius-control: 0.5rem;
+  --radius-panel: 0.75rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Тёмная тема: планшет на кухне и телефон в зале часто в тёмном режиме.
+   Обе темы обязаны быть рабочими.
 
+   Переопределяем именно переменные на :root, а не через @theme — директива
+   @theme работает только на верхнем уровне и внутри медиазапроса не сработает. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-canvas: oklch(16% 0 0);
+    --color-surface: oklch(21% 0 0);
+    --color-surface-muted: oklch(26% 0 0);
+    --color-border: oklch(32% 0 0);
+    --color-border-strong: oklch(45% 0 0);
+
+    --color-text: oklch(96% 0 0);
+    --color-text-muted: oklch(70% 0 0);
+    --color-text-inverse: oklch(16% 0 0);
+
+    --color-accent: oklch(85% 0 0);
+    --color-accent-hover: oklch(95% 0 0);
+    --color-accent-text: oklch(16% 0 0);
+
+    --color-success: oklch(70% 0.15 150);
+    --color-warning: oklch(80% 0.15 85);
+    --color-danger: oklch(68% 0.19 25);
+    --color-info: oklch(70% 0.12 240);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    /* Полезно для планшета: без этого двойной тап зумит страницу */
+    touch-action: manipulation;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Видимый фокус обязателен: по системе ходят с клавиатуры и со скринридером */
+  :focus-visible {
+    outline: 2px solid var(--color-info);
+    outline-offset: 2px;
+  }
 }
