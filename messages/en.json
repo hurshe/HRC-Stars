@@ -270,5 +270,204 @@
         "permissionLocked": "This permission is locked for editing"
       }
     }
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Documents, recipes and training materials",
+    "add": "Add document",
+    "searchPlaceholder": "Search by title or tag",
+    "allCategories": "All categories",
+    "spaces": {
+      "HR": "HR documents",
+      "TRAINING": "Training materials",
+      "RECIPES": "Recipes and tutorials",
+      "GENERAL": "About Hard Rock Cafe"
+    },
+    "spaceHints": {
+      "HR": "Contracts, medical records, signed policies. Restricted access",
+      "TRAINING": "Materials linked to tests and positions",
+      "RECIPES": "Recipes, tech cards, presentation standards",
+      "GENERAL": "Brand history, standards, general information"
+    },
+    "noAccess": "You do not have access to this section",
+    "empty": {
+      "title": "No documents",
+      "description": "Add the first document to this section."
+    },
+    "table": {
+      "title": "Title",
+      "category": "Category",
+      "version": "Version",
+      "updated": "Updated",
+      "assigned": "Assignments"
+    },
+    "new": {
+      "title": "New document",
+      "subtitle": "A file or a document written in the system",
+      "documentTitle": "Title",
+      "description": "Description",
+      "space": "Section",
+      "category": "Category",
+      "tags": "Tags",
+      "tagsHint": "Separate with commas",
+      "validUntil": "Valid until",
+      "kind": "Type",
+      "kindFile": "File",
+      "kindText": "Text in the system",
+      "file": "File",
+      "fileHint": "PDF, DOCX, image or video. Up to 25 MB",
+      "content": "Content",
+      "submit": "Save document",
+      "notSelected": "— none —"
+    },
+    "detail": {
+      "versions": "Version history",
+      "version": "Version {number}",
+      "download": "Download",
+      "newVersion": "New version",
+      "changeNote": "What changed",
+      "assignments": "Assignments",
+      "assignTo": "Assign",
+      "noAssignments": "This document has not been assigned to anyone yet",
+      "requiresAck": "Requires acknowledgement",
+      "acknowledgedBy": "{count, plural, =0 {No acknowledgements} one {# acknowledgement} other {# acknowledgements}}",
+      "author": "Author",
+      "createdAt": "Created"
+    },
+    "my": {
+      "title": "To read",
+      "acknowledge": "I have read and confirm",
+      "acknowledged": "Confirmed {date}",
+      "due": "Due: {date}",
+      "empty": "You have no pending documents"
+    },
+    "errors": {
+      "tooLarge": "File is too large. Maximum 25 MB",
+      "unsupportedType": "Unsupported file type",
+      "notFound": "Document not found",
+      "fileOrContentRequired": "Attach a file or write some content"
+    }
+  },
+  "training": {
+    "title": "Training",
+    "subtitle": "Tests, results and the team readiness matrix",
+    "tabs": {
+      "tests": "Tests",
+      "matrix": "Matrix",
+      "my": "My tests"
+    },
+    "add": "New test",
+    "searchPlaceholder": "Search tests",
+    "table": {
+      "title": "Test",
+      "category": "Category",
+      "versions": "Versions",
+      "questions": "Questions",
+      "attempts": "Attempts",
+      "status": "Status",
+      "positions": "Positions"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "inactive": "Inactive"
+    },
+    "empty": {
+      "title": "No tests",
+      "description": "Create the first test for your team."
+    },
+    "new": {
+      "title": "New test",
+      "subtitle": "Basics first, questions next",
+      "testTitle": "Test name",
+      "description": "Description",
+      "category": "Category",
+      "categoryHint": "Beverage, Food, Brand, Safety…",
+      "timeLimit": "Time limit (minutes)",
+      "passThreshold": "Pass threshold (%)",
+      "passThresholdHint": "Leave empty to use the default from settings",
+      "submit": "Create test"
+    },
+    "builder": {
+      "questions": "Questions",
+      "addQuestion": "Add question",
+      "questionText": "Question text",
+      "type": "Question type",
+      "types": {
+        "SINGLE_CHOICE": "Single answer",
+        "MULTIPLE_CHOICE": "Multiple answers",
+        "TRUE_FALSE": "True / false",
+        "SHORT_TEXT": "Short answer",
+        "ORDERING": "Ordering",
+        "MATCHING": "Matching"
+      },
+      "options": "Answer options",
+      "optionsHint": "One option per line",
+      "answer": "Correct answer",
+      "answerHintChoice": "Number of the correct option, starting from 1",
+      "answerHintMultiple": "Numbers of correct options, comma separated",
+      "answerHintText": "Accepted answers, comma separated",
+      "points": "Points",
+      "explanation": "Explanation",
+      "noQuestions": "This test has no questions yet",
+      "publish": "Publish version",
+      "published": "Version published — questions can no longer change",
+      "maxScore": "Maximum score: {score}",
+      "assign": "Assign test",
+      "assignments": "Assignments",
+      "noAssignments": "This test has not been assigned yet",
+      "mandatory": "Mandatory",
+      "repeatEvery": "Repeat every (days)",
+      "paperResult": "Paper result",
+      "paperHint": "Enter a result for a test taken outside the system",
+      "employee": "Employee",
+      "score": "Score"
+    },
+    "matrix": {
+      "title": "Readiness matrix",
+      "subtitle": "Rows are employees, columns are tests and required documents",
+      "allPositions": "All positions",
+      "employee": "Employee",
+      "noData": "—",
+      "empty": "No employees to show",
+      "legend": "Colour is computed from the current thresholds, not set by hand",
+      "documents": "Documents",
+      "tests": "Tests",
+      "export": "Export to XLSX"
+    },
+    "attempt": {
+      "start": "Start test",
+      "continue": "Continue",
+      "question": "Question {current} of {total}",
+      "previous": "Back",
+      "next": "Next",
+      "finish": "Finish test",
+      "submitting": "Saving…",
+      "timeLeft": "Time left: {time}",
+      "result": "Result",
+      "passed": "Passed",
+      "failed": "Not passed",
+      "scoreLine": "{score} of {max} points",
+      "threshold": "Pass threshold: {threshold}%",
+      "review": "Answer review",
+      "yourAnswer": "Your answer",
+      "backToList": "Back to tests",
+      "noAttemptsLeft": "No attempts left",
+      "notPublished": "This test is not published yet"
+    },
+    "my": {
+      "title": "My tests",
+      "empty": "You have no assigned tests",
+      "bestResult": "Best result: {percent}%",
+      "notTaken": "Not taken yet",
+      "due": "Due: {date}"
+    },
+    "errors": {
+      "notFound": "Test not found",
+      "alreadyPublished": "This version is already published",
+      "noQuestions": "Add at least one question",
+      "locked": "A published version cannot be changed",
+      "invalidAnswer": "Check the correct answer"
+    }
   }
 }

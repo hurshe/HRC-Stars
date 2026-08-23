@@ -1,0 +1,221 @@
+// Wild Cards, ваучеры, награды (этап 5) и программы обучения
+// с сертификатами (этап 6).
+
+/// Начисление Wild Card. Хранится партиями, а не одним счётчиком: у каждой
+/// партии свой срок годности, и списывать нужно самые старые карты первыми,
+/// иначе свежие уйдут на ваучер, а старые сгорят.
+model WildCardGrant {
+  id           String   @id @default(cuid())
+  userId       String
+  grantedById  String
+  amount       Int
+  reason       String
+  note         String?
+  grantedAt    DateTime @default(now())
+  /// Срок годности партии. По умолчанию 3 месяца, значение из настроек
+  expiresAt    DateTime
+  /// Сколько карт из партии уже израсходовано
+  consumed     Int      @default(0)
+
+  user      User @relation("WildCardOwner", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy User @relation("WildCardGranter", fields: [grantedById], references: [id])
+
+  @@index([userId, expiresAt])
+  @@index([grantedById])
+}
+
+model VoucherType {
+  id             String   @id @default(cuid())
+  locationId     String
+  name           String
+  description    String?
+  /// Стоимость в Wild Card
+  cost           Int
+  /// Сколько дней действует сам ваучер после подтверждения
+  validityDays   Int?
+  /// Лимит на человека за период. null — без ограничений
+  perPersonLimit Int?
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  location Location         @relation(fields: [locationId], references: [id])
+  requests VoucherRequest[]
+
+  @@index([locationId])
+}
+
+enum VoucherRequestStatus {
+  /// Карты зарезервированы, ждём решения менеджера
+  PENDING
+  /// Менеджер подтвердил, карты списаны, ваучером можно пользоваться
+  APPROVED
+  /// Отклонён, резерв снят и карты вернулись на баланс
+  REJECTED
+  /// Ваучер использован
+  USED
+  EXPIRED
+}
+
+model VoucherRequest {
+  id            String               @id @default(cuid())
+  userId        String
+  voucherTypeId String
+  /// Стоимость фиксируется в момент заявки: изменение цены в каталоге
+  /// не должно задним числом менять условия уже поданной заявки
+  cost          Int
+  status        VoucherRequestStatus @default(PENDING)
+  requestedAt   DateTime             @default(now())
+  decidedAt     DateTime?
+  decidedById   String?
+  usedAt        DateTime?
+  markedUsedById String?
+  validUntil    DateTime?
+  rejectionNote String?
+
+  user         User        @relation("VoucherRequester", fields: [userId], references: [id], onDelete: Cascade)
+  voucherType  VoucherType @relation(fields: [voucherTypeId], references: [id])
+  decidedBy    User?       @relation("VoucherApprover", fields: [decidedById], references: [id])
+  markedUsedBy User?       @relation("VoucherRedeemer", fields: [markedUsedById], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+/// Пины и годовщины из листов PINY и ROCZNICE STAFF
+model Award {
+  id     String   @id @default(cuid())
+  userId String
+  type   String
+  name   String
+  date   DateTime
+  note   String?
+  grantedById String?
+  createdAt DateTime @default(now())
+
+  user      User  @relation("AwardOwner", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy User? @relation("AwardGranter", fields: [grantedById], references: [id])
+
+  @@index([userId])
+}
+
+// ─── Программы обучения и сертификаты ─────────────────────────────────────
+
+enum ProgramType {
+  /// Онбординг новичка
+  ONBOARDING
+  /// Manager in Training: гости из других кафе HRC
+  MIT
+  CUSTOM
+}
+
+enum ProgramStepType {
+  DOCUMENT
+  TEST
+  /// Практический шаг, отмечается куратором
+  PRACTICE
+}
+
+model Program {
+  id          String      @id @default(cuid())
+  locationId  String
+  name        String
+  description String?
+  type        ProgramType @default(CUSTOM)
+  positionId  String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  location    Location            @relation(fields: [locationId], references: [id])
+  position    Position?           @relation(fields: [positionId], references: [id])
+  steps       ProgramStep[]
+  enrollments ProgramEnrollment[]
+  certificates Certificate[]
+
+  @@index([locationId])
+}
+
+model ProgramStep {
+  id        String          @id @default(cuid())
+  programId String
+  sortOrder Int             @default(0)
+  type      ProgramStepType
+  title     String
+  /// Ссылка на документ или тест в зависимости от типа
+  refId     String?
+  required  Boolean         @default(true)
+
+  program  Program              @relation(fields: [programId], references: [id], onDelete: Cascade)
+  progress ProgramStepProgress[]
+
+  @@index([programId])
+}
+
+model ProgramEnrollment {
+  id          String    @id @default(cuid())
+  userId      String
+  programId   String
+  mentorId    String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  /// Для гостей MIT: до какого числа длится стажировка
+  dueAt       DateTime?
+
+  user     User                  @relation("ProgramParticipant", fields: [userId], references: [id], onDelete: Cascade)
+  program  Program               @relation(fields: [programId], references: [id])
+  mentor   User?                 @relation("ProgramMentor", fields: [mentorId], references: [id])
+  progress ProgramStepProgress[]
+
+  @@unique([userId, programId])
+  @@index([programId])
+}
+
+model ProgramStepProgress {
+  id           String    @id @default(cuid())
+  enrollmentId String
+  stepId       String
+  completedAt  DateTime?
+  completedById String?
+  note         String?
+
+  enrollment  ProgramEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  step        ProgramStep       @relation(fields: [stepId], references: [id])
+  completedBy User?             @relation(fields: [completedById], references: [id])
+
+  @@unique([enrollmentId, stepId])
+}
+
+/// Сертификат по завершении программы. Номер уникален и проверяем по реестру
+model Certificate {
+  id        String   @id @default(cuid())
+  userId    String
+  programId String
+  number    String   @unique
+  issuedAt  DateTime @default(now())
+  fileKey   String?
+  issuedById String?
+
+  user     User     @relation("CertificateOwner", fields: [userId], references: [id], onDelete: Cascade)
+  program  Program  @relation(fields: [programId], references: [id])
+  issuedBy User?    @relation("CertificateIssuer", fields: [issuedById], references: [id])
+
+  @@index([userId])
+}
+
+// ─── Уведомления ──────────────────────────────────────────────────────────
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String?
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([createdAt])
+}

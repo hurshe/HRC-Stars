@@ -1,0 +1,199 @@
+// Модуль документов и знаний (этап 2).
+//
+// Четыре пространства с разной моделью доступа, но одним движком хранения:
+// HR-документы, обучающие материалы, рецептуры и общая информация о бренде.
+
+enum DocumentSpace {
+  /// Договоры, медкнижки, подписанные политики. Доступ по отдельному праву
+  HR
+  /// Материалы, привязанные к тестам и позициям
+  TRAINING
+  /// Рецептуры, техкарты, стандарты подачи
+  RECIPES
+  /// История бренда, specs, корпоративные стандарты
+  GENERAL
+}
+
+enum DocumentKind {
+  /// Загруженный файл: PDF, DOCX, изображение, видео
+  FILE
+  /// Документ, написанный прямо в системе
+  RICH_TEXT
+}
+
+model DocumentCategory {
+  id        String        @id @default(cuid())
+  space     DocumentSpace
+  name      String
+  parentId  String?
+  sortOrder Int           @default(0)
+  isActive  Boolean       @default(true)
+
+  parent    DocumentCategory?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children  DocumentCategory[] @relation("CategoryTree")
+  documents Document[]
+
+  @@index([space])
+  @@index([parentId])
+}
+
+model Document {
+  id         String        @id @default(cuid())
+  locationId String
+  space      DocumentSpace
+  categoryId String?
+  title      String
+  description String?
+  kind       DocumentKind  @default(FILE)
+  tags       String[]      @default([])
+
+  /// Срок действия самого документа: после него нужен пересмотр
+  validUntil DateTime?
+  /// Актуальная версия. Старые не удаляются, а остаются в истории
+  currentVersionId String? @unique
+
+  createdById String
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  location       Location             @relation(fields: [locationId], references: [id])
+  category       DocumentCategory?    @relation(fields: [categoryId], references: [id])
+  createdBy      User                 @relation("DocumentAuthor", fields: [createdById], references: [id])
+  currentVersion DocumentVersion?     @relation("CurrentVersion", fields: [currentVersionId], references: [id])
+  versions       DocumentVersion[]    @relation("DocumentVersions")
+  assignments    DocumentAssignment[]
+
+  @@index([locationId, space])
+  @@index([categoryId])
+  @@index([deletedAt])
+}
+
+/// Новая загрузка не затирает старую: у каждой версии свой файл и свой автор.
+/// Подтверждение ознакомления всегда привязано к конкретной версии — иначе
+/// после правки документа непонятно, что именно человек прочитал.
+model DocumentVersion {
+  id            String   @id @default(cuid())
+  documentId    String
+  versionNumber Int
+  /// Ключ файла в S3-совместимом хранилище
+  fileKey       String?
+  fileName      String?
+  fileSize      Int?
+  mimeType      String?
+  /// Содержимое для документов, написанных в системе
+  content       String?
+  changeNote    String?
+  authorId      String
+  createdAt     DateTime @default(now())
+
+  document         Document                  @relation("DocumentVersions", fields: [documentId], references: [id], onDelete: Cascade)
+  currentOf        Document?                 @relation("CurrentVersion")
+  author           User                      @relation(fields: [authorId], references: [id])
+  acknowledgements DocumentAcknowledgement[]
+
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+}
+
+/// Назначение: кому документ адресован. Ровно одно из полей заполнено —
+/// конкретный человек, роль или позиция.
+model DocumentAssignment {
+  id         String    @id @default(cuid())
+  documentId String
+  userId     String?
+  roleId     String?
+  positionId String?
+  dueAt      DateTime?
+  /// Требуется ли подтверждение прочтения
+  requiresAcknowledgement Boolean @default(true)
+  createdById String
+  createdAt   DateTime @default(now())
+
+  document  Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user      User?     @relation("DocumentAssignee", fields: [userId], references: [id], onDelete: Cascade)
+  role      Role?     @relation(fields: [roleId], references: [id])
+  position  Position? @relation(fields: [positionId], references: [id])
+  createdBy User      @relation("DocumentAssigner", fields: [createdById], references: [id])
+
+  @@index([documentId])
+  @@index([userId])
+  @@index([positionId])
+}
+
+model DocumentAcknowledgement {
+  id                String   @id @default(cuid())
+  documentVersionId String
+  userId            String
+  acknowledgedAt    DateTime @default(now())
+  ip                String?
+
+  documentVersion DocumentVersion @relation(fields: [documentVersionId], references: [id], onDelete: Cascade)
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentVersionId, userId])
+  @@index([userId])
+}
+
+// ─── Обязательные документы сотрудника ────────────────────────────────────
+//
+// Это замена колонок CV / Job Description / Employee Handbook из таблицы Excel.
+// Требования настраивает менеджер: какие документы обязательны для какой позиции.
+
+enum EmployeeDocumentStatus {
+  /// Документа нет
+  MISSING
+  /// Ждём подписанный оригинал
+  INCOMING
+  /// Бумажный оригинал на руках, скана нет
+  PAPER
+  /// Скан загружен в систему
+  UPLOADED
+  /// Срок действия истёк
+  EXPIRED
+}
+
+model DocumentRequirement {
+  id         String  @id @default(cuid())
+  locationId String
+  code       String
+  nameEn     String
+  namePl     String
+  positionId String?
+  /// Обязателен ли для допуска к работе
+  mandatory  Boolean @default(true)
+  /// Через сколько дней истекает. null — бессрочный
+  validityDays Int?
+  sortOrder  Int     @default(0)
+  isActive   Boolean @default(true)
+
+  location  Location           @relation(fields: [locationId], references: [id])
+  position  Position?          @relation(fields: [positionId], references: [id])
+  documents EmployeeDocument[]
+
+  @@unique([locationId, code])
+  @@index([positionId])
+}
+
+model EmployeeDocument {
+  id            String                 @id @default(cuid())
+  userId        String
+  requirementId String
+  status        EmployeeDocumentStatus @default(MISSING)
+  fileKey       String?
+  fileName      String?
+  issuedAt      DateTime?
+  validUntil    DateTime?
+  note          String?
+  updatedById   String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  user        User                @relation("EmployeeDocumentOwner", fields: [userId], references: [id], onDelete: Cascade)
+  requirement DocumentRequirement @relation(fields: [requirementId], references: [id])
+  updatedBy   User?               @relation("EmployeeDocumentEditor", fields: [updatedById], references: [id])
+
+  @@unique([userId, requirementId])
+  @@index([status])
+  @@index([validUntil])
+}

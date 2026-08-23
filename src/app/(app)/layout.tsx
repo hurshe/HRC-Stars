@@ -12,8 +12,8 @@ import { UserCard } from './user-card'
 const NAV: (ShellNavItem & { permission?: PermissionCode })[] = [
   { key: 'dashboard', href: '/dashboard' },
   { key: 'employees', href: '/employees', permission: 'employee.view' },
-  { key: 'documents', href: '/documents', permission: 'document.view', planned: true },
-  { key: 'training', href: '/training', permission: 'test.view', planned: true },
+  { key: 'documents', href: '/documents' },
+  { key: 'training', href: '/training', permission: 'test.view' },
   { key: 'checklists', href: '/checklists', permission: 'checklist.view', planned: true },
   { key: 'tasks', href: '/tasks', permission: 'task.view', planned: true },
   { key: 'wildcards', href: '/wildcards', planned: true },

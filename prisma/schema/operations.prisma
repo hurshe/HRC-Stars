@@ -1,0 +1,185 @@
+// Чек-листы и задачи (этап 4).
+
+enum ChecklistFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  /// Разовый чек-лист под конкретное событие
+  ONCE
+}
+
+enum ChecklistItemType {
+  CHECKBOX
+  NUMBER
+  TEXT
+  PHOTO
+  SIGNATURE
+}
+
+enum ChecklistRunStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  VERIFIED
+  /// Не закрыт вовремя
+  OVERDUE
+}
+
+model ChecklistTemplate {
+  id         String             @id @default(cuid())
+  locationId String
+  name       String
+  category   String?
+  frequency  ChecklistFrequency @default(DAILY)
+  /// Дни недели для WEEKLY: 1 — понедельник. Пусто — каждый день
+  weekdays   Int[]              @default([])
+  /// Смена: OPENING, CLOSING, MID
+  shift      String?
+  positionId String?
+  /// Требуется ли приёмка супервайзером
+  requiresVerification Boolean  @default(false)
+  isActive   Boolean            @default(true)
+  createdById String
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  location  Location                @relation(fields: [locationId], references: [id])
+  position  Position?               @relation(fields: [positionId], references: [id])
+  createdBy User                    @relation("ChecklistAuthor", fields: [createdById], references: [id])
+  items     ChecklistItemTemplate[]
+  runs      ChecklistRun[]
+
+  @@index([locationId])
+}
+
+model ChecklistItemTemplate {
+  id         String            @id @default(cuid())
+  templateId String
+  label      String
+  hint       String?
+  type       ChecklistItemType @default(CHECKBOX)
+  required   Boolean           @default(true)
+  sortOrder  Int               @default(0)
+
+  template ChecklistTemplate     @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  results  ChecklistItemResult[]
+
+  @@index([templateId])
+}
+
+/// Прохождение чек-листа за конкретную дату и смену
+model ChecklistRun {
+  id         String             @id @default(cuid())
+  templateId String
+  locationId String
+  /// Дата смены, а не момент заполнения: закрытие может уйти за полночь
+  businessDate DateTime         @db.Date
+  shift      String?
+  status     ChecklistRunStatus @default(NOT_STARTED)
+  assigneeId String?
+  startedAt  DateTime?
+  submittedAt DateTime?
+  verifiedById String?
+  verifiedAt DateTime?
+  dueAt      DateTime?
+
+  template   ChecklistTemplate     @relation(fields: [templateId], references: [id])
+  location   Location              @relation(fields: [locationId], references: [id])
+  assignee   User?                 @relation("ChecklistAssignee", fields: [assigneeId], references: [id])
+  verifiedBy User?                 @relation("ChecklistVerifier", fields: [verifiedById], references: [id])
+  results    ChecklistItemResult[]
+
+  @@unique([templateId, businessDate, shift])
+  @@index([locationId, businessDate])
+  @@index([status])
+}
+
+model ChecklistItemResult {
+  id     String @id @default(cuid())
+  runId  String
+  itemId String
+  /// Значение зависит от типа пункта: галочка, число, текст
+  value  Json?
+  photoKey String?
+  note   String?
+  completedById String?
+  completedAt   DateTime?
+
+  run         ChecklistRun          @relation(fields: [runId], references: [id], onDelete: Cascade)
+  item        ChecklistItemTemplate @relation(fields: [itemId], references: [id])
+  completedBy User?                 @relation(fields: [completedById], references: [id])
+
+  @@unique([runId, itemId])
+  @@index([runId])
+}
+
+// ─── Задачи ───────────────────────────────────────────────────────────────
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TaskStatus {
+  NEW
+  IN_PROGRESS
+  DONE
+  /// Автор принял работу
+  ACCEPTED
+  CANCELLED
+}
+
+/// Задачи идут вниз по иерархии: GM и AGM ставят менеджерам и супервайзерам,
+/// те — стаффу. Проверка уровня делается в сервисном слое.
+model Task {
+  id          String       @id @default(cuid())
+  locationId  String
+  title       String
+  description String?
+  authorId    String
+  /// Ровно одно из трёх: конкретный человек, роль или позиция
+  assigneeId       String?
+  assigneeRoleId   String?
+  assigneePositionId String?
+  dueAt       DateTime?
+  priority    TaskPriority @default(MEDIUM)
+  status      TaskStatus   @default(NEW)
+  /// Нужна ли приёмка автором. Если нет, закрытие исполнителем финально
+  requiresApproval Boolean @default(false)
+  /// Привязка к сущности системы: сотрудник, документ, тест, чек-лист
+  relatedType String?
+  relatedId   String?
+  /// Повторяемость в днях. null — разовая
+  repeatEveryDays Int?
+  completedAt DateTime?
+  acceptedAt  DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  location         Location      @relation(fields: [locationId], references: [id])
+  author           User          @relation("TaskAuthor", fields: [authorId], references: [id])
+  assignee         User?         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  assigneeRole     Role?         @relation(fields: [assigneeRoleId], references: [id])
+  assigneePosition Position?     @relation(fields: [assigneePositionId], references: [id])
+  comments         TaskComment[]
+
+  @@index([locationId, status])
+  @@index([assigneeId])
+  @@index([authorId])
+  @@index([dueAt])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  authorId  String
+  text      String
+  fileKey   String?
+  createdAt DateTime @default(now())
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([taskId])
+}

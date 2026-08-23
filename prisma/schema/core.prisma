@@ -28,6 +28,16 @@ model Location {
   users     User[]
   settings  Setting[]
   auditLogs AuditLog[]
+
+  documents            Document[]
+  documentRequirements DocumentRequirement[]
+  questionBanks        QuestionBank[]
+  tests                Test[]
+  checklistTemplates   ChecklistTemplate[]
+  checklistRuns        ChecklistRun[]
+  tasks                Task[]
+  voucherTypes         VoucherType[]
+  programs             Program[]
 }
 
 /// Департамент: Management, FOH, Retail, Kitchen, Receiving.
@@ -58,6 +68,13 @@ model Position {
   department Department         @relation(fields: [departmentId], references: [id])
   employees  EmployeePosition[]
 
+  documentAssignments  DocumentAssignment[]
+  documentRequirements DocumentRequirement[]
+  testAssignments      TestAssignment[]
+  checklistTemplates   ChecklistTemplate[]
+  tasks                Task[]
+  programs             Program[]
+
   @@index([departmentId])
 }
 
@@ -79,6 +96,10 @@ model Role {
 
   users       User[]
   permissions RolePermission[]
+
+  documentAssignments DocumentAssignment[]
+  testAssignments     TestAssignment[]
+  tasks               Task[]
 
   @@index([level])
 }
@@ -221,6 +242,51 @@ model User {
   createdInvitations  Invitation[]       @relation("InvitationCreator")
   auditEntries        AuditLog[]         @relation("AuditActor")
   updatedSettings     Setting[]
+
+  // Документы
+  authoredDocuments        Document[]                @relation("DocumentAuthor")
+  documentVersions         DocumentVersion[]
+  documentAssignments      DocumentAssignment[]      @relation("DocumentAssignee")
+  createdDocumentAssignments DocumentAssignment[]    @relation("DocumentAssigner")
+  acknowledgements         DocumentAcknowledgement[]
+  employeeDocuments        EmployeeDocument[]        @relation("EmployeeDocumentOwner")
+  editedEmployeeDocuments  EmployeeDocument[]        @relation("EmployeeDocumentEditor")
+
+  // Обучение
+  authoredTests        Test[]           @relation("TestAuthor")
+  testAssignments      TestAssignment[] @relation("TestAssignee")
+  createdTestAssignments TestAssignment[] @relation("TestAssigner")
+  attempts             TestAttempt[]    @relation("AttemptOwner")
+  gradedAttempts       TestAttempt[]    @relation("AttemptGrader")
+  evaluations          Evaluation[]     @relation("EvaluationSubject")
+  authoredEvaluations  Evaluation[]     @relation("EvaluationAuthor")
+
+  // Операционка
+  authoredChecklists    ChecklistTemplate[]   @relation("ChecklistAuthor")
+  checklistRuns         ChecklistRun[]        @relation("ChecklistAssignee")
+  verifiedChecklistRuns ChecklistRun[]        @relation("ChecklistVerifier")
+  checklistItemResults  ChecklistItemResult[]
+  authoredTasks         Task[]                @relation("TaskAuthor")
+  assignedTasks         Task[]                @relation("TaskAssignee")
+  taskComments          TaskComment[]
+
+  // Признание
+  wildCards        WildCardGrant[]  @relation("WildCardOwner")
+  grantedWildCards WildCardGrant[]  @relation("WildCardGranter")
+  voucherRequests  VoucherRequest[] @relation("VoucherRequester")
+  approvedVouchers VoucherRequest[] @relation("VoucherApprover")
+  redeemedVouchers VoucherRequest[] @relation("VoucherRedeemer")
+  awards           Award[]          @relation("AwardOwner")
+  grantedAwards    Award[]          @relation("AwardGranter")
+
+  // Программы
+  enrollments           ProgramEnrollment[]   @relation("ProgramParticipant")
+  mentoredEnrollments   ProgramEnrollment[]   @relation("ProgramMentor")
+  completedProgramSteps ProgramStepProgress[]
+  certificates          Certificate[]         @relation("CertificateOwner")
+  issuedCertificates    Certificate[]         @relation("CertificateIssuer")
+
+  notifications Notification[]
 
   @@index([locationId])
   @@index([roleId])

@@ -5,7 +5,8 @@ import 'dotenv/config'
 import { defineConfig, env } from 'prisma/config'
 
 export default defineConfig({
-  schema: 'prisma/schema.prisma',
+  // Папка, а не файл: моделей много, держать их в одном файле неудобно
+  schema: 'prisma/schema',
   migrations: {
     path: 'prisma/migrations',
     seed: 'tsx prisma/seed.ts',

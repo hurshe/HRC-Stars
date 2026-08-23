@@ -270,5 +270,204 @@
         "permissionLocked": "To uprawnienie jest zablokowane do edycji"
       }
     }
+  },
+  "documents": {
+    "title": "Dokumenty",
+    "subtitle": "Baza dokumentów, receptur i materiałów szkoleniowych",
+    "add": "Dodaj dokument",
+    "searchPlaceholder": "Szukaj po tytule lub tagu",
+    "allCategories": "Wszystkie kategorie",
+    "spaces": {
+      "HR": "Dokumenty HR",
+      "TRAINING": "Materiały szkoleniowe",
+      "RECIPES": "Receptury i tutoriale",
+      "GENERAL": "O Hard Rock Cafe"
+    },
+    "spaceHints": {
+      "HR": "Umowy, badania, podpisane polityki. Dostęp tylko dla uprawnionych",
+      "TRAINING": "Materiały powiązane z testami i stanowiskami",
+      "RECIPES": "Receptury, karty techniczne, standardy podania",
+      "GENERAL": "Historia marki, standardy, informacje ogólne"
+    },
+    "noAccess": "Nie masz dostępu do tej sekcji",
+    "empty": {
+      "title": "Brak dokumentów",
+      "description": "Dodaj pierwszy dokument w tej sekcji."
+    },
+    "table": {
+      "title": "Tytuł",
+      "category": "Kategoria",
+      "version": "Wersja",
+      "updated": "Aktualizacja",
+      "assigned": "Przypisania"
+    },
+    "new": {
+      "title": "Nowy dokument",
+      "subtitle": "Plik albo dokument napisany w systemie",
+      "documentTitle": "Tytuł",
+      "description": "Opis",
+      "space": "Sekcja",
+      "category": "Kategoria",
+      "tags": "Tagi",
+      "tagsHint": "Oddziel przecinkami",
+      "validUntil": "Ważny do",
+      "kind": "Rodzaj",
+      "kindFile": "Plik",
+      "kindText": "Tekst w systemie",
+      "file": "Plik",
+      "fileHint": "PDF, DOCX, obraz lub wideo. Maksymalnie 25 MB",
+      "content": "Treść",
+      "submit": "Zapisz dokument",
+      "notSelected": "— brak —"
+    },
+    "detail": {
+      "versions": "Historia wersji",
+      "version": "Wersja {number}",
+      "download": "Pobierz",
+      "newVersion": "Nowa wersja",
+      "changeNote": "Co się zmieniło",
+      "assignments": "Przypisania",
+      "assignTo": "Przypisz",
+      "noAssignments": "Dokument nie został jeszcze nikomu przypisany",
+      "requiresAck": "Wymaga potwierdzenia",
+      "acknowledgedBy": "{count, plural, =0 {Nikt nie potwierdził} one {# potwierdzenie} few {# potwierdzenia} other {# potwierdzeń}}",
+      "author": "Autor",
+      "createdAt": "Utworzono"
+    },
+    "my": {
+      "title": "Do przeczytania",
+      "acknowledge": "Przeczytałem i potwierdzam",
+      "acknowledged": "Potwierdzono {date}",
+      "due": "Termin: {date}",
+      "empty": "Nie masz zaległych dokumentów"
+    },
+    "errors": {
+      "tooLarge": "Plik jest za duży. Maksymalnie 25 MB",
+      "unsupportedType": "Nieobsługiwany typ pliku",
+      "notFound": "Nie znaleziono dokumentu",
+      "fileOrContentRequired": "Dodaj plik albo wpisz treść"
+    }
+  },
+  "training": {
+    "title": "Szkolenia",
+    "subtitle": "Testy, wyniki i macierz przygotowania zespołu",
+    "tabs": {
+      "tests": "Testy",
+      "matrix": "Macierz",
+      "my": "Moje testy"
+    },
+    "add": "Nowy test",
+    "searchPlaceholder": "Szukaj testu",
+    "table": {
+      "title": "Test",
+      "category": "Kategoria",
+      "versions": "Wersje",
+      "questions": "Pytania",
+      "attempts": "Podejścia",
+      "status": "Status",
+      "positions": "Stanowiska"
+    },
+    "status": {
+      "draft": "Wersja robocza",
+      "published": "Opublikowany",
+      "inactive": "Nieaktywny"
+    },
+    "empty": {
+      "title": "Brak testów",
+      "description": "Utwórz pierwszy test dla swojego zespołu."
+    },
+    "new": {
+      "title": "Nowy test",
+      "subtitle": "Najpierw dane podstawowe, potem pytania",
+      "testTitle": "Nazwa testu",
+      "description": "Opis",
+      "category": "Kategoria",
+      "categoryHint": "Beverage, Food, Brand, Safety…",
+      "timeLimit": "Limit czasu (minuty)",
+      "passThreshold": "Próg zaliczenia (%)",
+      "passThresholdHint": "Zostaw puste, aby użyć wartości domyślnej z ustawień",
+      "submit": "Utwórz test"
+    },
+    "builder": {
+      "questions": "Pytania",
+      "addQuestion": "Dodaj pytanie",
+      "questionText": "Treść pytania",
+      "type": "Typ pytania",
+      "types": {
+        "SINGLE_CHOICE": "Jedna odpowiedź",
+        "MULTIPLE_CHOICE": "Wiele odpowiedzi",
+        "TRUE_FALSE": "Prawda / fałsz",
+        "SHORT_TEXT": "Krótka odpowiedź",
+        "ORDERING": "Kolejność",
+        "MATCHING": "Dopasowanie"
+      },
+      "options": "Warianty odpowiedzi",
+      "optionsHint": "Każdy wariant w nowej linii",
+      "answer": "Poprawna odpowiedź",
+      "answerHintChoice": "Numer poprawnego wariantu, licząc od 1",
+      "answerHintMultiple": "Numery poprawnych wariantów, oddzielone przecinkami",
+      "answerHintText": "Akceptowane odpowiedzi, oddzielone przecinkami",
+      "points": "Punkty",
+      "explanation": "Wyjaśnienie",
+      "noQuestions": "Test nie ma jeszcze pytań",
+      "publish": "Opublikuj wersję",
+      "published": "Wersja opublikowana — pytań już nie można zmieniać",
+      "maxScore": "Maksymalna liczba punktów: {score}",
+      "assign": "Przypisz test",
+      "assignments": "Przypisania",
+      "noAssignments": "Test nie został jeszcze przypisany",
+      "mandatory": "Obowiązkowy",
+      "repeatEvery": "Powtarzać co (dni)",
+      "paperResult": "Wynik z papieru",
+      "paperHint": "Wpisz wynik testu zdanego poza systemem",
+      "employee": "Pracownik",
+      "score": "Wynik"
+    },
+    "matrix": {
+      "title": "Macierz przygotowania",
+      "subtitle": "Wiersze — pracownicy, kolumny — testy i wymagane dokumenty",
+      "allPositions": "Wszystkie stanowiska",
+      "employee": "Pracownik",
+      "noData": "—",
+      "empty": "Brak pracowników do pokazania",
+      "legend": "Kolor liczony jest z aktualnych progów, a nie ustawiany ręcznie",
+      "documents": "Dokumenty",
+      "tests": "Testy",
+      "export": "Eksport do XLSX"
+    },
+    "attempt": {
+      "start": "Rozpocznij test",
+      "continue": "Kontynuuj",
+      "question": "Pytanie {current} z {total}",
+      "previous": "Wstecz",
+      "next": "Dalej",
+      "finish": "Zakończ test",
+      "submitting": "Zapisywanie…",
+      "timeLeft": "Pozostało: {time}",
+      "result": "Wynik",
+      "passed": "Zaliczone",
+      "failed": "Niezaliczone",
+      "scoreLine": "{score} z {max} punktów",
+      "threshold": "Próg zaliczenia: {threshold}%",
+      "review": "Przegląd odpowiedzi",
+      "yourAnswer": "Twoja odpowiedź",
+      "backToList": "Wróć do testów",
+      "noAttemptsLeft": "Wykorzystano wszystkie podejścia",
+      "notPublished": "Test nie jest jeszcze opublikowany"
+    },
+    "my": {
+      "title": "Moje testy",
+      "empty": "Nie masz przypisanych testów",
+      "bestResult": "Najlepszy wynik: {percent}%",
+      "notTaken": "Jeszcze nie zdawane",
+      "due": "Termin: {date}"
+    },
+    "errors": {
+      "notFound": "Nie znaleziono testu",
+      "alreadyPublished": "Wersja jest już opublikowana",
+      "noQuestions": "Dodaj przynajmniej jedno pytanie",
+      "locked": "Opublikowanej wersji nie można zmieniać",
+      "invalidAnswer": "Sprawdź poprawną odpowiedź"
+    }
   }
 }
