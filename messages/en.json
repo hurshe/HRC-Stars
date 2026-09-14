@@ -81,7 +81,8 @@
     "settings": "Settings",
     "ariaLabel": "Main navigation",
     "comingSoon": "Coming soon",
-    "designSystem": "Design system"
+    "designSystem": "Design system",
+    "programs": "Programs"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -267,7 +268,8 @@
         "tasks": "Tasks",
         "wildcards": "Wild Cards",
         "reports": "Reports",
-        "settings": "Settings and audit"
+        "settings": "Settings and audit",
+        "programs": "Programs and certificates"
       },
       "errors": {
         "notFound": "Role or permission not found",
@@ -676,6 +678,165 @@
       "note": "Note",
       "submit": "Allocate",
       "allocated": "On account: {balance}"
+    }
+  },
+  "programs": {
+    "title": "Training programs",
+    "subtitle": "Onboarding, the MIT program and completion certificates",
+    "tabs": {
+      "my": "My programs",
+      "all": "All programs",
+      "certificates": "Certificate registry"
+    },
+    "add": "New program",
+    "type": {
+      "ONBOARDING": "Onboarding",
+      "MIT": "Manager in Training",
+      "CUSTOM": "Custom"
+    },
+    "stepType": {
+      "DOCUMENT": "Document",
+      "TEST": "Test",
+      "PRACTICE": "Practice"
+    },
+    "status": {
+      "active": "Active",
+      "archived": "Archived",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "overdue": "Overdue"
+    },
+    "progress": "Progress: {done} of {total} required steps",
+    "progressLabel": "Program progress",
+    "due": "Due: {date}",
+    "mentor": "Mentor: {name}",
+    "noMentor": "No mentor",
+    "my": {
+      "empty": {
+        "title": "You are not enrolled in any program",
+        "description": "When a manager enrolls you in a program, it will appear here."
+      }
+    },
+    "all": {
+      "empty": {
+        "title": "No programs yet",
+        "description": "Create the first program, for example onboarding for new hires."
+      },
+      "table": {
+        "name": "Program",
+        "type": "Type",
+        "position": "Position",
+        "steps": "Steps",
+        "enrollments": "Participants",
+        "certificates": "Certificates",
+        "status": "Status"
+      }
+    },
+    "new": {
+      "title": "New program",
+      "subtitle": "Basic details first, then steps and participants",
+      "name": "Program name",
+      "namePlaceholder": "Onboarding — Server",
+      "type": "Program type",
+      "typeHint": "MIT is for managers visiting from other Hard Rock Cafe locations",
+      "position": "Position",
+      "positionAny": "Any",
+      "description": "Description",
+      "submit": "Create program"
+    },
+    "detail": {
+      "steps": "Steps",
+      "noSteps": "This program has no steps yet",
+      "required": "Required",
+      "optional": "Optional",
+      "unavailable": "Material unavailable — remove or replace this step",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove step",
+      "removeConfirm": "Remove?",
+      "addStep": "Add a step",
+      "stepType": "Step type",
+      "stepTitle": "Step name",
+      "stepTitleHint": "For a document or test you can leave this empty — its own name will be used",
+      "document": "Document",
+      "test": "Test",
+      "choose": "— choose —",
+      "requiredStep": "Required step",
+      "addSubmit": "Add",
+      "participants": "Participants",
+      "noParticipants": "Nobody is enrolled yet",
+      "enroll": "Enroll an employee",
+      "participant": "Employee",
+      "mentor": "Mentor",
+      "dueAt": "Completion deadline",
+      "enrollSubmit": "Enroll",
+      "startedAt": "Started",
+      "progress": "Progress",
+      "status": "Status",
+      "archive": "Archive program",
+      "restore": "Restore program",
+      "archivedNotice": "This program is archived — new participants cannot be enrolled"
+    },
+    "enrollment": {
+      "back": "Back",
+      "startedAt": "Started",
+      "stepDone": "Completed {date}",
+      "stepPending": "To do",
+      "verifiedBy": "Confirmed by {name}",
+      "openDocument": "Open document",
+      "acknowledge": "I have read this document",
+      "verify": "Confirm completion",
+      "unverify": "Undo confirmation",
+      "practiceHint": "A practical step is confirmed by your mentor or a manager",
+      "issue": "Complete and issue certificate",
+      "issueHint": "All required steps must be completed first",
+      "issued": "Certificate issued",
+      "certificate": "Certificate {number}",
+      "download": "Download PDF",
+      "cancel": "Remove from program",
+      "cancelConfirm": "Remove this participant?",
+      "cancelNo": "No"
+    },
+    "certificates": {
+      "searchPlaceholder": "Certificate number or surname",
+      "search": "Search",
+      "verified": "Certificate {number} is authentic: issued on {date} to {name} for the “{program}” program.",
+      "notFound": "No certificate found for “{query}”.",
+      "empty": {
+        "title": "No certificates issued yet",
+        "description": "A certificate appears once a participant completes a program."
+      },
+      "table": {
+        "number": "Number",
+        "person": "Person",
+        "program": "Program",
+        "issuedAt": "Issued",
+        "issuedBy": "Issued by",
+        "file": "File"
+      }
+    },
+    "profile": {
+      "title": "Programs and certificates",
+      "empty": "This employee is not enrolled in any program"
+    },
+    "errors": {
+      "notFound": "Not found",
+      "forbidden": "You do not have permission for this action",
+      "invalidType": "Invalid type",
+      "refRequired": "Choose a document or a test",
+      "titleRequired": "Enter a step name",
+      "programInactive": "This program is archived",
+      "participantTooHigh": "You can only enroll people below you in the hierarchy",
+      "mentorIsParticipant": "A participant cannot be their own mentor",
+      "alreadyEnrolled": "This person is already enrolled in this program",
+      "enrollmentCompleted": "This program is already completed — changes are locked",
+      "cannotVerifyOwn": "You cannot confirm your own step",
+      "notPracticeStep": "Only practical steps are confirmed manually",
+      "unavailable": "The material is unavailable",
+      "alreadyCompleted": "The certificate has already been issued",
+      "cannotIssueOwn": "You cannot issue a certificate to yourself",
+      "notReady": "Not all required steps are completed",
+      "numberConflict": "Could not assign a number — please try again"
     }
   }
 }

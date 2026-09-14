@@ -21,6 +21,7 @@ export type PermissionGroup =
   | 'personal_data'
   | 'documents'
   | 'tests'
+  | 'programs'
   | 'checklists'
   | 'tasks'
   | 'wildcards'
@@ -60,6 +61,14 @@ export const PERMISSIONS = [
   { code: 'test.result.view', group: 'tests', nameEn: 'View results of others', namePl: 'Podgląd wyników innych' },
   { code: 'test.result.enter', group: 'tests', nameEn: 'Enter paper results', namePl: 'Wprowadzanie wyników papierowych' },
   { code: 'test.threshold.manage', group: 'tests', nameEn: 'Manage pass thresholds', namePl: 'Zarządzanie progami zaliczenia' },
+
+  // Программы обучения и сертификаты
+  { code: 'program.view', group: 'programs', nameEn: 'View programs and progress', namePl: 'Podgląd programów i postępów' },
+  { code: 'program.manage', group: 'programs', nameEn: 'Manage programs', namePl: 'Zarządzanie programami' },
+  { code: 'program.enroll', group: 'programs', nameEn: 'Enroll employees', namePl: 'Zapisywanie pracowników' },
+  { code: 'program.step.verify', group: 'programs', nameEn: 'Sign off practical steps', namePl: 'Zatwierdzanie etapów praktycznych' },
+  { code: 'certificate.issue', group: 'programs', nameEn: 'Issue certificates', namePl: 'Wydawanie certyfikatów' },
+  { code: 'certificate.view', group: 'programs', nameEn: 'View certificate registry', namePl: 'Podgląd rejestru certyfikatów' },
 
   // Чек-листы
   { code: 'checklist.view', group: 'checklists', nameEn: 'View checklists', namePl: 'Podgląd list kontrolnych' },
@@ -135,6 +144,8 @@ const MANAGER_PERMISSIONS: PermissionCode[] = [
   'document.assign', 'document.requirement.manage',
   'test.view', 'test.create', 'test.edit', 'test.delete', 'test.assign',
   'test.result.view', 'test.result.enter', 'test.threshold.manage',
+  'program.view', 'program.manage', 'program.enroll', 'program.step.verify',
+  'certificate.issue', 'certificate.view',
   'checklist.view', 'checklist.template.manage', 'checklist.run', 'checklist.verify',
   'task.view', 'task.create', 'task.assign', 'task.verify',
   'wildcard.grant', 'wildcard.balance.view', 'wildcard.voucher.manage',

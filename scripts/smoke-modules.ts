@@ -189,11 +189,18 @@ async function main() {
   }
 
   if (manager) {
+    // Счёт мог остаться от прошлых прогонов, поэтому сверяем разницу,
+    // а не абсолютное число: иначе проверка проходила только на чистой базе
+    const stockBefore = (await getManagerStock(manager.id))?.balance ?? 0
     const allocated = await allocateToManager(actor, { managerId: manager.id, amount: 20 })
     check('карты выданы на счёт менеджера', allocated.ok)
 
     const stock = await getManagerStock(manager.id)
-    check('счёт менеджера заведён', stock?.balance === 20, `на счету ${stock?.balance}`)
+    check(
+      'счёт менеджера пополнен на 20',
+      stock?.balance === stockBefore + 20,
+      `было ${stockBefore}, стало ${stock?.balance}`,
+    )
 
     const managerActor: CurrentUser = {
       ...actor,
@@ -213,7 +220,11 @@ async function main() {
     )
 
     const afterStock = await getManagerStock(manager.id)
-    check('счёт менеджера уменьшился', afterStock?.balance === 17, `осталось ${afterStock?.balance}`)
+    check(
+      'счёт менеджера уменьшился на 3',
+      afterStock?.balance === (stock?.balance ?? 0) - 3,
+      `осталось ${afterStock?.balance}`,
+    )
 
     const tooMuch = await grantWildCards(managerActor, {
       userId: employee.id,

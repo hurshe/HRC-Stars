@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, type ReactNode } from 'react'
 import { useTranslations } from 'next-intl'
 import {
+  Award,
   BarChart3,
   ClipboardCheck,
   FileText,
@@ -26,6 +27,7 @@ const ICONS = {
   employees: Users,
   documents: FileText,
   training: GraduationCap,
+  programs: Award,
   checklists: ClipboardCheck,
   tasks: ListTodo,
   wildcards: Ticket,

@@ -7,6 +7,7 @@ import { getEmployee, readPersonalData } from '@/server/services/employees'
 import { Badge, toneForStatus } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { EmployeePrograms } from '../../programs/employee-programs'
 import { InviteActions, TrainerToggle } from './employee-actions'
 
 function Row({ label, value }: { label: string; value: string | null | undefined }) {
@@ -162,6 +163,10 @@ export default async function EmployeeProfilePage({ params }: PageProps<'/employ
           </dl>
         )}
       </Card>
+
+      {permissions.has('program.view') && (
+        <EmployeePrograms actor={actor} userId={employee.id} />
+      )}
     </div>
   )
 }

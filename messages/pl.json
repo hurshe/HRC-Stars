@@ -81,7 +81,8 @@
     "settings": "Ustawienia",
     "ariaLabel": "Nawigacja główna",
     "comingSoon": "Wkrótce",
-    "designSystem": "System projektowy"
+    "designSystem": "System projektowy",
+    "programs": "Programy"
   },
   "dashboard": {
     "title": "Pulpit",
@@ -267,7 +268,8 @@
         "tasks": "Zadania",
         "wildcards": "Wild Cards",
         "reports": "Raporty",
-        "settings": "Ustawienia i audyt"
+        "settings": "Ustawienia i audyt",
+        "programs": "Programy i certyfikaty"
       },
       "errors": {
         "notFound": "Nie znaleziono roli lub uprawnienia",
@@ -676,6 +678,165 @@
       "note": "Notatka",
       "submit": "Wydaj",
       "allocated": "Na koncie: {balance}"
+    }
+  },
+  "programs": {
+    "title": "Programy szkoleniowe",
+    "subtitle": "Onboarding, program MIT i certyfikaty ukończenia",
+    "tabs": {
+      "my": "Moje programy",
+      "all": "Wszystkie programy",
+      "certificates": "Rejestr certyfikatów"
+    },
+    "add": "Nowy program",
+    "type": {
+      "ONBOARDING": "Onboarding",
+      "MIT": "Manager in Training",
+      "CUSTOM": "Własny"
+    },
+    "stepType": {
+      "DOCUMENT": "Dokument",
+      "TEST": "Test",
+      "PRACTICE": "Praktyka"
+    },
+    "status": {
+      "active": "Aktywny",
+      "archived": "Zarchiwizowany",
+      "inProgress": "W trakcie",
+      "completed": "Ukończony",
+      "overdue": "Po terminie"
+    },
+    "progress": "Postęp: {done} z {total} obowiązkowych etapów",
+    "progressLabel": "Postęp programu",
+    "due": "Termin: {date}",
+    "mentor": "Opiekun: {name}",
+    "noMentor": "Bez opiekuna",
+    "my": {
+      "empty": {
+        "title": "Nie jesteś zapisany(-a) na żaden program",
+        "description": "Gdy menedżer zapisze Cię na program, pojawi się on tutaj."
+      }
+    },
+    "all": {
+      "empty": {
+        "title": "Brak programów",
+        "description": "Utwórz pierwszy program, np. onboarding dla nowych pracowników."
+      },
+      "table": {
+        "name": "Program",
+        "type": "Typ",
+        "position": "Stanowisko",
+        "steps": "Etapy",
+        "enrollments": "Uczestnicy",
+        "certificates": "Certyfikaty",
+        "status": "Status"
+      }
+    },
+    "new": {
+      "title": "Nowy program",
+      "subtitle": "Najpierw dane podstawowe, potem etapy i uczestnicy",
+      "name": "Nazwa programu",
+      "namePlaceholder": "Onboarding — Kelner",
+      "type": "Typ programu",
+      "typeHint": "MIT — dla menedżerów przyjeżdżających z innych restauracji Hard Rock Cafe",
+      "position": "Stanowisko",
+      "positionAny": "Dowolne",
+      "description": "Opis",
+      "submit": "Utwórz program"
+    },
+    "detail": {
+      "steps": "Etapy",
+      "noSteps": "Program nie ma jeszcze etapów",
+      "required": "Obowiązkowy",
+      "optional": "Opcjonalny",
+      "unavailable": "Materiał niedostępny — usuń lub zastąp ten etap",
+      "moveUp": "Przesuń w górę",
+      "moveDown": "Przesuń w dół",
+      "remove": "Usuń etap",
+      "removeConfirm": "Usunąć?",
+      "addStep": "Dodaj etap",
+      "stepType": "Rodzaj etapu",
+      "stepTitle": "Nazwa etapu",
+      "stepTitleHint": "Dla dokumentu i testu można zostawić puste — użyjemy ich nazwy",
+      "document": "Dokument",
+      "test": "Test",
+      "choose": "— wybierz —",
+      "requiredStep": "Etap obowiązkowy",
+      "addSubmit": "Dodaj",
+      "participants": "Uczestnicy",
+      "noParticipants": "Nikt nie jest jeszcze zapisany",
+      "enroll": "Zapisz pracownika",
+      "participant": "Pracownik",
+      "mentor": "Opiekun",
+      "dueAt": "Termin ukończenia",
+      "enrollSubmit": "Zapisz",
+      "startedAt": "Rozpoczęty",
+      "progress": "Postęp",
+      "status": "Status",
+      "archive": "Archiwizuj program",
+      "restore": "Przywróć program",
+      "archivedNotice": "Program jest zarchiwizowany — nie można zapisywać nowych uczestników"
+    },
+    "enrollment": {
+      "back": "Wróć",
+      "startedAt": "Rozpoczęty",
+      "stepDone": "Zaliczony {date}",
+      "stepPending": "Do zrobienia",
+      "verifiedBy": "Potwierdził(a): {name}",
+      "openDocument": "Otwórz dokument",
+      "acknowledge": "Zapoznałem(-am) się z dokumentem",
+      "verify": "Potwierdź wykonanie",
+      "unverify": "Cofnij potwierdzenie",
+      "practiceHint": "Etap praktyczny potwierdza opiekun lub menedżer",
+      "issue": "Zakończ i wydaj certyfikat",
+      "issueHint": "Najpierw muszą być zaliczone wszystkie obowiązkowe etapy",
+      "issued": "Certyfikat wydany",
+      "certificate": "Certyfikat {number}",
+      "download": "Pobierz PDF",
+      "cancel": "Wypisz z programu",
+      "cancelConfirm": "Na pewno wypisać?",
+      "cancelNo": "Nie"
+    },
+    "certificates": {
+      "searchPlaceholder": "Numer certyfikatu lub nazwisko",
+      "search": "Szukaj",
+      "verified": "Certyfikat {number} jest autentyczny: wydany {date} dla {name}, program „{program}”.",
+      "notFound": "Nie znaleziono certyfikatu dla „{query}”.",
+      "empty": {
+        "title": "Brak wydanych certyfikatów",
+        "description": "Certyfikat pojawi się, gdy uczestnik ukończy program."
+      },
+      "table": {
+        "number": "Numer",
+        "person": "Osoba",
+        "program": "Program",
+        "issuedAt": "Data wydania",
+        "issuedBy": "Wystawił(a)",
+        "file": "Plik"
+      }
+    },
+    "profile": {
+      "title": "Programy i certyfikaty",
+      "empty": "Pracownik nie jest zapisany na żaden program"
+    },
+    "errors": {
+      "notFound": "Nie znaleziono",
+      "forbidden": "Brak uprawnień do tej operacji",
+      "invalidType": "Nieprawidłowy typ",
+      "refRequired": "Wybierz dokument lub test",
+      "titleRequired": "Podaj nazwę etapu",
+      "programInactive": "Program jest zarchiwizowany",
+      "participantTooHigh": "Zapisywać można tylko osoby niżej w hierarchii",
+      "mentorIsParticipant": "Uczestnik nie może być własnym opiekunem",
+      "alreadyEnrolled": "Ta osoba jest już zapisana na ten program",
+      "enrollmentCompleted": "Program jest już ukończony — zmiany są zablokowane",
+      "cannotVerifyOwn": "Nie można potwierdzić własnego etapu",
+      "notPracticeStep": "Ręcznie potwierdza się tylko etapy praktyczne",
+      "unavailable": "Materiał jest niedostępny",
+      "alreadyCompleted": "Certyfikat został już wydany",
+      "cannotIssueOwn": "Nie można wystawić certyfikatu samemu sobie",
+      "notReady": "Nie wszystkie obowiązkowe etapy są zaliczone",
+      "numberConflict": "Nie udało się nadać numeru — spróbuj ponownie"
     }
   }
 }

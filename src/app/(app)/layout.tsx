@@ -14,6 +14,8 @@ const NAV: (ShellNavItem & { permission?: PermissionCode })[] = [
   { key: 'employees', href: '/employees', permission: 'employee.view' },
   { key: 'documents', href: '/documents' },
   { key: 'training', href: '/training', permission: 'test.view' },
+  // Без права: «мои программы» нужны каждому, включая STAFF и гостей MIT
+  { key: 'programs', href: '/programs' },
   { key: 'checklists', href: '/checklists', permission: 'checklist.view' },
   { key: 'tasks', href: '/tasks', permission: 'task.view' },
   { key: 'wildcards', href: '/wildcards' },
